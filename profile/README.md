@@ -14,7 +14,7 @@ So naturally, I decided to build her a better system for her birthday. That's ho
 
 ## 🏗️ The First Iteration: When Things Actually Worked (For a While)
 
-The initial [servarr stack](https://github.com/adhityaravi/psygoat-legacyapps/tree/main/servarr) was actually pretty dope. It followed the (TRaSH)[https://trash-guides.info/] guides, had a cool movies/series requesting system based on Overseerr, and even had IMDb integration. The server stayed in India, but we were able to stream media quite reliably (to my surprise) in Germany, Norway, and even Mexico given stable internet speeds. It used a bunch of Tailscale / cloud VPS shenanigans since the server was in a CGNAT network, hence lacking a static IP. But it worked and I was happy.
+The initial [servarr stack](https://github.com/adhityaravi/psygoat-legacyapps/tree/main/servarr) was actually pretty dope. It followed the [TRaSH](https://trash-guides.info/) guides, had a cool movies/series requesting system based on Overseerr, and even had IMDb integration. The server stayed in India, but we were able to stream media quite reliably (to my surprise) in Germany, Norway, and even Mexico given stable internet speeds. It used a bunch of Tailscale / cloud VPS shenanigans since the server was in a CGNAT network, hence lacking a static IP. But it worked and I was happy.
 
 ### But It Only Worked Until It Didn't 💀
 
