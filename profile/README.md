@@ -28,7 +28,7 @@ The hardware setup itself was cooked (but we'll leave that story out of here and
 
 3. **No Backup or Redundancy** - Neither hardware nor software. Because, YOLO.
 
-4. **Security? What Security?** - It had a Gluetun killswitch, which was great (and maybe that's enough for most home servers), but there was no separation of concerns, no idea of access control, etc.
+4. **Security? What Security?** - It had a badly configured gluetun killswitch, which was okay (and maybe that's enough for most home servers), but there was no separation of concerns, no idea of access control, etc.
 
 5. **No Scalability** - Again, probably not needed considering self-hosted servers are usually for personal use, but still.
 
@@ -65,7 +65,7 @@ Well, it was all too overwhelming. I had the Proxmox cluster and TrueNAS systems
 
 So I wanted to learn from my mistakes again and find a middle ground. Which meant I wanted to build a **repeatably deployable, scalable, reliable servarr stack** based on a K8s substrate with security features first. Then host it on mediocre existing hardware, then enhance/automate or whatever the platform and hardware.
 
-Fortunately, my everyday work was focused on quality open source tools including [Juju charms](https://canonical.com/juju), observability, and service meshes. And I was working with a bunch of smart people who were also self-hosting a lot.
+Fortunately, my everyday work is focused on quality open source tools including [Juju charms](https://canonical.com/juju), observability, and service meshes. And I am working with a bunch of smart people far more experienced who were also self-hosting a lot. This meant I didn't have to do a lot of guess work.
 
 ### 🔍 The Research Phase
 
@@ -156,7 +156,7 @@ Also, I change my mind quite often and this is a very alpha project, so there wi
 The charmed servarr stack itself. The main event. The reason we're all here.
 
 ### 2. 🤖 Flintarr
-An [opperator](https://github.com/opper-ai/opperator)-based AI agent for Charmarr named after the famous Cap. Flint, the parrot, from Treasure Islands. I'm not sure what exactly this agent will do, but mostly it'll be like an assistant with preprogrammed tools that will let you ask questions about the state, logs, metrics, and maybe even configure etc. of your stack. Because duh... AI.
+An [opperator](https://github.com/opper-ai/opperator)-based AI agent for Charmarr named after the famous Cap. Flint, the parrot, from Treasure Island. I'm not sure what exactly this agent will do, but mostly it'll be like an assistant with preprogrammed tools that will let you ask questions about the state, logs, metrics, and maybe even configure etc. of your stack. Because duh... AI.
 
 ### 3. ⚙️ Configuratarr
 (Yeah, I put all my creativity on naming the above two products. I had to go basic for this one.)
@@ -193,7 +193,7 @@ Details TBD, but this will be open and accessible for all.
 
 ## 💬 Final Thoughts
 
-This is a passion project born from frustration with streaming platforms, a desire to learn, and having no life. The aim is to make a complex system simple. That said, this wont be the simplest, easiest ARR solutions out there as I've mentioned. But if you want to over-engineer your media server to an absurd degree while learning about Kubernetes, charms, service meshes, and modern DevOps practices... welcome home, friend.
+This is a passion project born from frustration with streaming platforms, a desire to learn, and having no life. The aim is to make a complex system simple. That said, this wont be the simplest, easiest ARR solutions out there as I've mentioned. But if you want to over-engineer your media server to an absurd degree while learning about Kubernetes, charms, service meshes, and state-of-the-art tools... welcome home, friend.
 
 Let's build something unnecessarily complex together. 🚀
 
