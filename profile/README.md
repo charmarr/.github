@@ -173,7 +173,12 @@ This will probably be the lowest priority ever, if I even get to it. This is the
 
 ## 🗺️ What's Next?
 
-But like I said, this might change. I might add more products, remove or deprecate products even before they go live, or give up completely. I'll maybe try to create a roadmap when I'm done with all the initial architectural decisions and probably make the meta repo public.
+But like I said, this might change. I might add more products, remove or deprecate products even before they go live, or give up completely. I'll maybe try to create a roadmap when I'm done with all the initial architectural decisions and probably make the meta repo public as a starter.
+
+🟢 Create an organization, repositories, product nomenclature, and logos
+🟠 Complete architectural design records for charmarr
+⚪ TBD
+⚪ TBD
 
 (If this generates some/any interest, I'll open discussions for this organization.)
 
