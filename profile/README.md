@@ -177,7 +177,7 @@ But like I said, this might change. I might add more products, remove or depreca
 
 🟢 Create an organization, repositories, product nomenclature, and logos  
 🟠 Complete architectural design records for charmarr  
-⚪ Create a charm template for charmarr charms  
+🟢 Create a charm template for charmarr charms  
 ⚪ Create the charmarr topology data model in `charmarr-lib`  
 ⚪ Create the shared reconciler in `charmarr-lib`  
 ⚪ Create `tailscale-connector-k8s` charm  
