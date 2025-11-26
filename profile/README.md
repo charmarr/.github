@@ -196,7 +196,15 @@ Contributions, issues, and feature requests are welcome! This is an alpha projec
 
 ## 📜 License
 
-Details TBD, but this will be open and accessible for all.
+Charmarr is committed to **strong open source principles** with a pragmatic approach. Different components use different licenses:
+
+- **Services & Network Applications**: AGPL-3.0
+- **Libraries**: LGPL-3.0
+- **Local Tools**: GPL-3.0
+- **Documentation**: CC-BY-SA-4.0
+- **Community Files**: CC0-1.0
+
+Check individual repositories for specific license details. Use it, fork it, improve it, just don't be a dick and keep it open. 🌸
 
 ---
 
