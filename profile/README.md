@@ -1,12 +1,12 @@
 # 🎬 Charmarr: Because Streaming Platforms Are Expensive and I'm Petty
 
-> A charmed, Kubernetes-native servarr stack for the masochists who want scalable, reliable, observable, and frankly over-engineered media automation. Because why solve problems simply when you can suffer beautifully? 
+> A charmed, Kubernetes-native servarr stack for the masochists who want scalable, reliable, observable, and frankly over-engineered media automation. Because why solve problems simply when you can suffer beautifully?
 
 ---
 
 ## 📖 The Origin Story (or: How I Got Here)
 
-This whole thing started in 2023 when I learned about Plex from my then girlfriend. Her brother had this pre-assembled NAS box serving movies through Plex, and it was cool as fuck. But what it lacked was any way to request and download movies cleanly without sending a bunch of texts back and forth. 
+This whole thing started in 2023 when I learned about Plex from my then girlfriend. Her brother had this pre-assembled NAS box serving movies through Plex, and it was cool as fuck. But what it lacked was any way to request and download movies cleanly without sending a bunch of texts back and forth.
 
 So naturally, I decided to build her a better system for her birthday. That's how the ARR journey began and the **psygoat homelab** was born.
 
@@ -36,7 +36,7 @@ The hardware setup itself was cooked (but we'll leave that story out of here and
 
 ### The Inevitable Collapse 📉
 
-So what this meant was that eventually, when the server had hiccups, and in parallel my work got busy (or because I'm a lazy little bitch), the small hiccups piled up and eventually the server became irrecoverable. It ran successfully for less than a year, which I still consider a success anyway. 
+So what this meant was that eventually, when the server had hiccups, and in parallel my work got busy (or because I'm a lazy little bitch), the small hiccups piled up and eventually the server became irrecoverable. It ran successfully for less than a year, which I still consider a success anyway.
 
 And I had to painfully pay for a million commercial streaming platforms again.
 
@@ -69,7 +69,7 @@ Fortunately, my everyday work is focused on quality open source tools including 
 
 ### 🔍 The Research Phase
 
-I went on a small research phase and found some amazing ARR management tools/material out there (awesome-arr, yams, quick-arr-Stack, arr helm charts, nixarr, etc. - shout out to NixOS while I am at it). They were all so awesome that I wanted to just use them (especially yams, man that thing is sexy). 
+I went on a small research phase and found some amazing ARR management tools/material out there (awesome-arr, yams, quick-arr-Stack, arr helm charts, nixarr, etc. - shout out to NixOS while I am at it). They were all so awesome that I wanted to just use them (especially yams, man that thing is sexy).
 
 Then where will I get my daily dose of suffering and pain and quench my masochistic thirst? JK, lol.
 
@@ -175,14 +175,14 @@ This will probably be the lowest priority ever, if I even get to it. This is the
 
 But like I said, this might change. I might add more products, remove or deprecate products even before they go live, or give up completely. I'll maybe try to create a roadmap when I'm done with all the initial architectural decisions and probably make the meta repo public as a starter.
 
-🟢 Create an organization, repositories, product nomenclature, and logos  
-🟠 Complete architectural design records for charmarr  
-🟢 Create a charm template for charmarr charms  
-⚪ Create the charmarr topology data model in `charmarr-lib`  
-⚪ Create the shared reconciler in `charmarr-lib`  
-⚪ Create `tailscale-connector-k8s` charm  
-⚪ TBD  
-⚪ TBD  
+🟢 Create an organization, repositories, product nomenclature, and logos
+🟢 Create a charm template for charmarr charms
+🟢 Update org level community guidelines and consolidate licenses
+🟠 Complete architectural design records for charmarr
+⚪ Create the charmarr topology data model in `charmarr-lib`
+⚪ Create the shared reconciler in `charmarr-lib`
+⚪ Create `tailscale-connector-k8s` charm
+⚪ TBD
 
 (If this generates some/any interest, I'll open discussions for this organization.)
 
