@@ -1,4 +1,4 @@
-# 🎬 Charmarr: Because Streaming Platforms Are Expensive and I'm Petty
+# 🎬 Charmarr
 
 > A charmed, Kubernetes-native servarr stack for the masochists who want scalable, reliable, observable, and frankly over-engineered media automation. Because why solve problems simply when you can suffer beautifully?
 
@@ -6,7 +6,7 @@
 
 ## 📖 The Origin Story (or: How I Got Here)
 
-This whole thing started in 2023 when I learned about Plex from my then girlfriend. Her brother had this pre-assembled NAS box serving movies through Plex, and it was cool as fuck. But what it lacked was any way to request and download movies cleanly without sending a bunch of texts back and forth.
+This whole thing started in 2023 when I learned about Plex from my then girlfriend. Her brother had this pre-assembled NAS box serving movies through Plex, and it was cool as fuck. But what it lacked was any way to request movies cleanly without sending a bunch of texts back and forth.
 
 So naturally, I decided to build her a better system for her birthday. That's how the ARR journey began and the **psygoat homelab** was born.
 
@@ -38,8 +38,6 @@ The hardware setup itself was cooked (but we'll leave that story out of here and
 
 So what this meant was that eventually, when the server had hiccups, and in parallel my work got busy (or because I'm a lazy little bitch), the small hiccups piled up and eventually the server became irrecoverable. It ran successfully for less than a year, which I still consider a success anyway.
 
-And I had to painfully pay for a million commercial streaming platforms again.
-
 ---
 
 ## 🚀 The Second Attempt: When Ambition Exceeded Reality
@@ -57,7 +55,7 @@ My plans were a little too grand. It involved:
 - Automatically joining the VM nodes into the k8s cluster
 - Setting up an OPNsense router and automating the shit out of it, etc.
 
-Well, it was all too overwhelming. I had the Proxmox cluster and TrueNAS systems functioning. But, I was switching jobs at the exact same time, and the automations I setup kinda sorta never worked. Which meant I threw my hands up in the air as god intended and continued painfully paying for a million streaming platforms.
+Well, it was all too overwhelming. I had the Proxmox cluster and TrueNAS systems functioning. But, I was switching jobs at the exact same time, and the automations I setup kinda sorta never worked. Which meant I threw my hands up in the air as god intended.
 
 ---
 
@@ -69,15 +67,17 @@ Fortunately, my everyday work is focused on quality open source tools including 
 
 ### 🔍 The Research Phase
 
-I went on a small research phase and found some amazing ARR management tools/material out there (awesome-arr, yams, quick-arr-Stack, arr helm charts, nixarr, etc. - shout out to NixOS while I am at it). They were all so awesome that I wanted to just use them (especially yams, man that thing is sexy).
+I went on a small research phase and found some amazing ARR management tools/material out there (awesome-arr, yams, quick-arr-Stack, arr helm charts, nixarr, etc. - shout out to NixOS while I am at it). They were all so awesome that I wanted to just use them. Especially [yams](https://yams.media/), man that thing is sexy. So shout out also to the yams team and its lead dev [rogs](https://rogs.me/).
 
-Then where will I get my daily dose of suffering and pain and quench my masochistic thirst? JK, lol.
+But if I use existing solutions, where will I get my daily dose of suffering and pain and quench my masochistic thirst? JK, lol.
 
 ### 🎯 The Problem That Remained
 
-One thing that was common among all the ARR setups in my research: even though most of the ARR deployment and lifecycle was simplified and easy as fuck, **the configuration and interconnection of the ARR applications with one another was still quite complex**. Or at least one had to read through a lot of docs to do a bunch of manual configs.
+One thing that was common among all the ARR setups in my research: even though most of the ARR deployment and lifecycle was simplified and easy, **the configuration and interconnection of the ARR applications with one another was still quite complex**. Or at least one had to read through a lot of docs to do a bunch of manual configs. This meant that if I were to bork the stack (which i totally dont ever do), even though bringing up the stack would be easy, I'd still need to do the configs and setups painfully manually. And we've established I'm as lazy as they come.
 
-Which meant that if I were to nuke or bork the stack, even though bringing up the stack would be easy, I'd still need to do the configs and setups painfully manually. And we've established I'm as lazy as they come.
+But also there is a lack of a yams like framework for a K8s substrate. There was the [k8s@home](https://github.com/k8s-at-home) project which was amazing and I learned quite a lot from it. But it has been deprecated for a while now. I could see similar patterns in other cool k8s-based ARR solutions as well. They are either deprecated or unmaintained.
+
+Another thing is figuring out networking and storage. The relative simplicity of these disappears in a K8s substrate. For storage, you'd need to handle PVs, PVCs, StorageClasses, etc and figure out how to plug into different storage backends (local, NFS, Ceph, etc). Secure networking opens a whole new can of worms as well. Raw-dogging all that with yaml files would be a PITA.
 
 And there were no existing modular systems (for example, an observability system) that you could just opt into your stack. Of course you could set up Prometheus, Grafana and stuff, but again, lets be realistic, ain't no one gonna ever maintain that.
 
@@ -97,12 +97,13 @@ And there are existing stacks that could be connected with your servarr stack:
 - **COS Stack** - A charmed canonical observability stack is an existing premade observability solution
 - **Charmed Service Mesh** (which I co-develop and maintain) - Could be simply integrated into the servarr stack
 
-Even though service mesh is overkill for a home server and probably you gotta be insane and have no life to do that, hey, I'm both of those things, so...
+Even though service mesh is overkill for a home server and probably you gotta be insane and have no life to do that, hey, I got both of those things, so...
 
 ### Why This Approach? 🤔
 
 This solved two of the major problems I had with existing ARR solutions:
 1. **Automated cross-application configuration** through relations
+2. **Charm based thin automation wrappers** that could resolve some complexities of K8s including networking, storage, ingress, etc.
 2. **Modular opt-in features** like observability, service mesh, secrets management, etc.
 
 But to take advantage of all the previously mentioned stuff, the ARR applications must be "charmed." And hence the **Charmarr project** was born.
@@ -162,7 +163,7 @@ An [opperator](https://github.com/opper-ai/opperator)-based AI agent for Charmar
 (Yeah, I put all my creativity on naming the above two products. I had to go basic for this one.)
 
 A simple TUI helper app that will help you configure the Terraform solution. For example:
-- Enable mesh auth policies
+- Enable mesh auth policieshttps://xkcd.com/2021
 - Enable observability (enable tracing, etc.)
 - Enable OAuth
 - And other configuration options
@@ -175,14 +176,14 @@ This will probably be the lowest priority ever, if I even get to it. This is the
 
 But like I said, this might change. I might add more products, remove or deprecate products even before they go live, or give up completely. I'll maybe try to create a roadmap when I'm done with all the initial architectural decisions and probably make the meta repo public as a starter.
 
-🟢 Create an organization, repositories, product nomenclature, and logos  
-🟢 Create a charm template for charmarr charms  
-🟢 Update org level community guidelines and consolidate licenses  
-🟠 Complete architectural design records for charmarr  
-⚪ Create the charmarr topology data model in `charmarr-lib`  
-⚪ Create the shared reconciler in `charmarr-lib`  
-⚪ Create `tailscale-connector-k8s` charm  
-⚪ TBD  
+🟢 Create an organization, repositories, product nomenclature, and logos
+🟢 Create a charm template for charmarr charms
+🟢 Update org level community guidelines and consolidate licenses
+🟠 Complete architectural design records for charmarr
+⚪ Create the charmarr topology data model in `charmarr-lib`
+⚪ Create the shared reconciler in `charmarr-lib`
+⚪ Create `tailscale-connector-k8s` charm
+⚪ TBD
 
 (If this generates some/any interest, I'll open discussions for this organization.)
 
@@ -212,7 +213,9 @@ Check individual repositories for specific licenses. Use it, fork it, improve it
 
 This is a passion project born from frustration with streaming platforms, a desire to learn, and having no life. The aim is to make a complex system simple. That said, this wont be the simplest, easiest ARR solutions out there as I've mentioned. But if you want to over-engineer your media server to an absurd degree while learning about Kubernetes, charms, service meshes, and state-of-the-art tools... welcome home, friend.
 
-Let's build something unnecessarily complex together. 🚀
+Let's try and simplify complexities by building something even more complex. As Hammurabi said, Uno reverse or something. [Mandatory xkcd comic](https://xkcd.com/2021) 🚀
+
+Also, kids, no torrenting and no piracy. They are bad. That's a Uh Oh, Spaghetti-O situation. That's what the boo boo people do. So don't do it.
 
 ---
 
