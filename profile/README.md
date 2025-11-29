@@ -67,7 +67,7 @@ Fortunately(?), my everyday work is focused on quality open source tools includi
 
 ### 🔍 The Research Phase
 
-I went on a small research phase and found some amazing ARR management tools/material out there (awesome-arr, yams, quick-arr-Stack, arr helm charts, nixarr, etc. - shout out to NixOS while I am at it). They were all so awesome that I wanted to just use them. Especially [yams](https://yams.media/), its pretty cool and the community is very friendly. So shout out also to the yams team and its lead dev [rogs](https://rogs.me/).
+I went on a small research phase and found some amazing ARR management tools/material out there (awesome-arr, yams, quick-arr-Stack, arr helm charts, nixarr, etc. - shout out to NixOS while I am at it). They were all so awesome that I wanted to just use them. Especially [yams](https://yams.media/), it's pretty cool and the community is very friendly. So shout out also to the yams team and its lead dev [rogs](https://rogs.me/).
 
 But if I use existing solutions, where will I get my daily dose of suffering and pain and quench my masochistic thirst? JK, lol.
 
@@ -140,9 +140,9 @@ Hence, I've taken it upon myself to build Charmarr and the ecosystem around Char
 
 So if I have to be completely transparent: while I'm going to try to keep everything as simple as possible, this is a complex solution for a self-hosted scenario. Well, maybe not always because I've seen some "homelabs" on Reddit and those things are massive.
 
-Nonetheless, charmarr would be for intermediate to advanced homelab users who already know their way around the ARR stack to an extent and have atleast basic Kubernetes knowledge. Or for people willing to put in the work to learn about them. The [10% rule](https://www.urbandictionary.com/define.php?term=Ten%20Percent%20Rule) totally applies here. If you are running an automation without any idea of what and how its automating, you will be pwned. I am not trying to sound elitist, but charmarr is trying to solve a complex problem and there's no other way to put it. Setting up vanilla ARR services and messing around with them is, in my opinion, the best way to learn about ARRs and this should be the mandatory starting point. There are a ton of material available like the TRaSH guides to guide you. But tools like **yams** provide a nice a middleground between learning and automation.
+Nonetheless, charmarr might be for intermediate to advanced homelab users who already know their way around the ARR stack to an extent and have atleast basic Kubernetes knowledge. Or for people willing to put in the work to learn about them. Because if you are running an automation without any idea of what and how its automating, you will be pwned. Setting up vanilla ARR services and messing around with them is, in my opinion, the best way to learn about ARRs and this should be the mandatory starting point. But tools like **yams** provide a nice a middleground between learning and automation.
 
-Also, full disclosure, if you haven't already realized, charmarr wont be easily extensible. What does this mean? Let's say you find a cool new service that you want to add to your charmarr setup, you will still be able to manually hook up all the wires because it's basically a K8s cluster. But you wont get all the benefits of using charmarr, until you **charm** this new service. I might try to eventually solve this issue with cookiecutter, an AI agent or sth if there is enough of a common pattern that can be abstracted away.
+Also, full disclosure, if you haven't already realized, charmarr might not be easily extensible. What does this mean? Let's say you find a cool new service that you want to add to your charmarr setup, you will still be able to manually hook up all the wires because it's basically a K8s cluster in the background. But you won't get all the benefits of using charmarr, until you **charm** this new service.
 
 I wanna do this for the love of the game as a recreational project and I know someone other than me might be crazy enough to try.
 
