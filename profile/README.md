@@ -61,7 +61,7 @@ Well, it was all too overwhelming. I had the Proxmox cluster and TrueNAS systems
 
 ## 💡 The Third Time's the Charm: Charmarr is Born
 
-So I wanted to learn from my mistakes again and find a middle ground. Which meant I wanted to build a **repeatably deployable, scalable, reliable servarr stack** based on a K8s substrate with security features first. Then host it on mediocre existing hardware, then enhance/automate or whatever the platform and hardware.
+So I wanted to learn from my mistakes again and find a middle ground. Which meant I wanted to build a **repeatably deployable, scalable, reliable servarr stack** based on a K8s substrate with security first features. Then host it on mediocre existing hardware, then enhance/automate or whatever the platform and hardware.
 
 Fortunately, my everyday work is focused on quality open source tools including [Juju charms](https://canonical.com/juju), observability, and service meshes. And I am working with a bunch of smart people far more experienced who were also self-hosting a lot. This meant I didn't have to do a lot of guess work.
 
@@ -73,7 +73,7 @@ But if I use existing solutions, where will I get my daily dose of suffering and
 
 ### 🎯 The Problem That Remained
 
-One thing that was common among all the ARR setups in my research: even though most of the ARR deployment and lifecycle was simplified and easy, **the configuration and interconnection of the ARR applications with one another was still quite complex**. Or at least one had to read through a lot of docs to do a bunch of manual configs. This meant that if I were to bork the stack (which i totally dont ever do), even though bringing up the stack would be easy, I'd still need to do the configs and setups painfully manually. And we've established I'm as lazy as they come.
+One thing that was common among all the ARR setups in my research: even though most of the ARR deployment and lifecycle was simplified and easy, **the configuration and interconnection of the ARR applications with one another was still quite complex**. Or at least one had to read through a lot of docs to do a bunch of manual configs. This meant that if I were to bork the stack (which i totally dont ever do), even though bringing up the stack would be easy, I'd still need to do the configs and setups painfully manually. Yes, backups are the answer. But what about ditching a service completely and wanting to re-add it to the stack later? what about adding/removing multiple versions of the same service for different quality profiles? And we've established I'm as lazy as they come.
 
 But also there is a lack of a yams like framework for a K8s substrate. There was the [k8s@home](https://github.com/k8s-at-home) project which was amazing and I learned quite a lot from it. But it has been deprecated for a while now. I could see similar patterns in other cool k8s-based ARR solutions as well. They are either deprecated or unmaintained.
 
@@ -103,7 +103,7 @@ Even though service mesh is overkill for a home server and probably you gotta be
 
 This solved two of the major problems I had with existing ARR solutions:
 1. **Automated cross-application configuration** through relations
-2. **Charm based thin automation wrappers** that could resolve some complexities of K8s including networking, storage, ingress, etc.
+2. **Charm based thin automation wrappers** that could resolve some complexities of K8s including networking, storage, ingress etc.
 2. **Modular opt-in features** like observability, service mesh, secrets management, etc.
 
 But to take advantage of all the previously mentioned stuff, the ARR applications must be "charmed." And hence the **Charmarr project** was born.
@@ -123,9 +123,11 @@ The idea is to provide a **charmed version of all** (well, not ALL, but an "opin
   - Charmed IAM solutions
   - And opening up the possibility of integrating any charmed app into the stack
 
-Kinda like building with Lego. This sounded amazing to me.
+Kinda like building a Lego where other people make the Lego blocks for you for free. This sounded amazing to me.
 
-Hence, I've taken it upon myself to build Charmarr and the ecosystem around Charmarr so many more people can impress their friends and family in a scalable and reliable way.
+So wtf is Charmarr then? It's **not a media server** in itself. It's **a media server management system** based on the Juju framework that will help you to configure, deploy and maintain a secure media server stack using other amazing open source services. (TBD - list of actual components).
+
+Hence, I've taken it upon myself to build Charmarr and the ecosystem around Charmarr so many more people can impress their friends and family in a secure and reliable way.
 
 ---
 
@@ -133,9 +135,11 @@ Hence, I've taken it upon myself to build Charmarr and the ecosystem around Char
 
 **Absolutely, yes. 100%. Balls to the wall insane.**
 
-So if I have to be completely transparent: while I'm going to try to keep everything as simple as possible, this solution is definitely overkill for a self-hosted scenario. And I would still recommend **yams** if someone asks me if they want to ARR for the first time.
+So if I have to be completely transparent: while I'm going to try to keep everything as simple as possible, this is a complex solution for a self-hosted scenario. Well, maybe not always because I've seen some "homelabs" on Reddit and those things are massive. 
 
-But I wanna do this for the love of the game, and I know someone other than me might be crazy enough to try.
+Nonetheless, charmarr would be for intermediate to advanced homelab users who already know their way around the ARR stack to an extent and have atleast basic Kubernetes knowledge. Or for people willing to put in the work to learn about them. I am not trying to sound elitist, but charmarr is trying to solve a complex problem and there's no other way to put it. So, I would still recommend **yams** if someone wants to ARR for the first time. Especially if one wants a hands-on learning experience about the actual ARR services used in the background.
+
+I wanna do this for the love of the game, and I know someone other than me might be crazy enough to try.
 
 **So everyone is welcome to:**
 - Give it a try
@@ -163,7 +167,7 @@ An [opperator](https://github.com/opper-ai/opperator)-based AI agent for Charmar
 (Yeah, I put all my creativity on naming the above two products. I had to go basic for this one.)
 
 A simple TUI helper app that will help you configure the Terraform solution. For example:
-- Enable mesh auth policieshttps://xkcd.com/2021
+- Enable mesh auth policies
 - Enable observability (enable tracing, etc.)
 - Enable OAuth
 - And other configuration options
@@ -211,9 +215,9 @@ Check individual repositories for specific licenses. Use it, fork it, improve it
 
 ## 💬 Final Thoughts
 
-This is a passion project born from frustration with streaming platforms, a desire to learn, and having no life. The aim is to make a complex system simple. That said, this wont be the simplest, easiest ARR solutions out there as I've mentioned. But if you want to over-engineer your media server to an absurd degree while learning about Kubernetes, charms, service meshes, and state-of-the-art tools... welcome home, friend.
+This is a passion project born from frustration with region locked streaming platforms, a desire to reduce the management overhead of using open source tools and having no life. The aim is to make a complex system simple. That said, this wont be the simplest, easiest ARR solutions out there as I've mentioned. But if you want to over-engineer your media server to an absurd degree while learning about Kubernetes, charms, service meshes, and state-of-the-art tools... welcome home, friend.
 
-Let's try and simplify complexities by building something even more complex. As Hammurabi said, Uno reverse or something. [Mandatory xkcd comic](https://xkcd.com/2021) 🚀
+Let's try and simplify complexities by building something even more complex. As Hammurabi said, uno reverse or something. [Mandatory xkcd comic](https://xkcd.com/2021) 🚀
 
 Also, kids, no torrenting and no piracy. They are bad. That's a Uh Oh, Spaghetti-O situation. That's what the boo boo people do. So don't do it.
 
