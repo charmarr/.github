@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 The Origin Story (or: How I Got Here)
+## 📖 How it started
 
 This whole thing started in 2023 when I learned about Plex from my then girlfriend. Her brother had this pre-assembled NAS box serving movies through Plex, and it was cool as fuck. But what it lacked was any way to request movies cleanly without sending a bunch of texts back and forth.
 
