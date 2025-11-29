@@ -6,7 +6,7 @@
 
 ## 📖 How it started
 
-This whole thing started in 2023 when I learned about Plex from my then girlfriend. Her brother had this pre-assembled NAS box serving movies through Plex, and it was cool as fuck. But what it lacked was any way to request movies cleanly without sending a bunch of texts back and forth.
+This whole thing started in 2023 when I learned about Plex from my then girlfriend. Her brother had this pre-assembled NAS box serving movies through Plex, and it was cool as fuck. But what it lacked was, any way to request movies cleanly without sending a bunch of texts back and forth.
 
 So naturally, I decided to build her a better system for her birthday. That's how the ARR journey began and the **psygoat homelab** was born.
 
@@ -63,7 +63,7 @@ Well, it was all too overwhelming. I had the Proxmox cluster and TrueNAS systems
 
 So I wanted to learn from my mistakes again and find a middle ground. Which meant I wanted to build a **repeatably deployable, scalable, reliable servarr stack** based on a K8s substrate with security first features. Then host it on mediocre existing hardware, then enhance/automate or whatever the platform and hardware.
 
-Fortunately, my everyday work is focused on quality open source tools including [Juju charms](https://canonical.com/juju), observability, and service meshes. And I am working with a bunch of smart people far more experienced who were also self-hosting a lot. This meant I didn't have to do a lot of guess work.
+Fortunately(?), my everyday work is focused on quality open source tools including [Juju charms](https://canonical.com/juju), observability, and service meshes. And I am working with a bunch of smart people far more experienced who are also self-hosting a lot. This meant I didn't have to do a lot of guess work.
 
 ### 🔍 The Research Phase
 
@@ -101,7 +101,10 @@ Even though service mesh is overkill for a home server and probably you gotta be
 
 ### Why This Approach? 🤔
 
-This solved two of the major problems I had with existing ARR solutions:
+> because, fuck you<br>
+> -- [Linus Torvalds according to King Terry](https://youtube.com/shorts/obEQe0Le8_Y?si=3e1P_3tCXCn9OTnu)
+
+Less profanely, this solved two of the major problems I had with existing ARR solutions:
 1. **Automated cross-application configuration** through relations
 2. **Charm based thin automation wrappers** that could resolve some complexities of K8s including networking, storage, ingress etc.
 2. **Modular opt-in features** like observability, service mesh, secrets management, etc.
@@ -112,7 +115,7 @@ But to take advantage of all the previously mentioned stuff, the ARR application
 
 ## 🎯 What is Charmarr?
 
-The idea is to provide a **charmed version of all** (well, not ALL, but an "opinionated all" because fuck me, there are millions of ARR helper apps now, but at the same time warmly welcoming PRs with any new ARR charms) **the ARR apps**, automating the cross-application configuration, with:
+The idea is to provide a **charmed version of all** (well, not ALL, but an "opinionated all" because there are millions of ARR helper apps now, but at the same time warmly welcoming PRs with any new ARR charms) **the ARR apps**, automating the cross-application configuration, with:
 
 - A **configurator charm** to provide a single place for user configurations of all the apps
 - A **Terraform/Terragrunt-based solution** for lifecycle management of the stack
@@ -125,7 +128,7 @@ The idea is to provide a **charmed version of all** (well, not ALL, but an "opin
 
 Kinda like building a Lego where other people make the Lego blocks for you for free. This sounded amazing to me.
 
-So wtf is Charmarr then? It's **not a media server** in itself. It's **a media server management system** based on the Juju framework that will help you to configure, deploy and maintain a secure media server stack using other amazing open source services. (TBD - list of actual components).
+So wtf is Charmarr then? It's **not a media server** in itself. It's **a media server management system** based on the Juju framework that will help you to configure, deploy and maintain a secure media server stack by thinly wrapping existing open source ARR services as [charms](https://documentation.ubuntu.com/juju/3.6/reference/charm/). (TBD - list of actual components).
 
 Hence, I've taken it upon myself to build Charmarr and the ecosystem around Charmarr so many more people can impress their friends and family in a secure and reliable way.
 
@@ -135,13 +138,13 @@ Hence, I've taken it upon myself to build Charmarr and the ecosystem around Char
 
 **Absolutely, yes. 100%. Balls to the wall insane.**
 
-So if I have to be completely transparent: while I'm going to try to keep everything as simple as possible, this is a complex solution for a self-hosted scenario. Well, maybe not always because I've seen some "homelabs" on Reddit and those things are massive. 
+So if I have to be completely transparent: while I'm going to try to keep everything as simple as possible, this is a complex solution for a self-hosted scenario. Well, maybe not always because I've seen some "homelabs" on Reddit and those things are massive.
 
 Nonetheless, charmarr would be for intermediate to advanced homelab users who already know their way around the ARR stack to an extent and have atleast basic Kubernetes knowledge. Or for people willing to put in the work to learn about them. I am not trying to sound elitist, but charmarr is trying to solve a complex problem and there's no other way to put it. So, I would still recommend **yams** if someone wants to ARR for the first time. Especially if one wants a hands-on learning experience about the actual ARR services used in the background.
 
 I wanna do this for the love of the game, and I know someone other than me might be crazy enough to try.
 
-**So everyone is welcome to:**
+**That said, everyone is welcome to:**
 - Give it a try
 - Contribute
 - Use it
@@ -161,7 +164,7 @@ Also, I change my mind quite often and this is a very alpha project, so there wi
 The charmed servarr stack itself. The main event. The reason we're all here.
 
 ### 2. 🤖 Flintarr
-An [opperator](https://github.com/opper-ai/opperator)-based AI agent for Charmarr named after the famous Cap. Flint, the parrot, from Treasure Island. I'm not sure what exactly this agent will do, but mostly it'll be like an assistant with preprogrammed tools that will let you ask questions about the state, logs, metrics, and maybe even configure etc. of your stack. Because duh... AI.
+An [opperator](https://github.com/opper-ai/opperator)-based AI agent for Charmarr named after the famous Cpt.Flint, the parrot, from Treasure Island. I'm not sure what exactly this agent will do, but mostly it'll be like an assistant with preprogrammed tools that will let you ask questions about the state, logs, metrics, and maybe even configure etc. of your stack. Because duh... AI.
 
 ### 3. ⚙️ Configuratarr
 (Yeah, I put all my creativity on naming the above two products. I had to go basic for this one.)
@@ -180,14 +183,14 @@ This will probably be the lowest priority ever, if I even get to it. This is the
 
 But like I said, this might change. I might add more products, remove or deprecate products even before they go live, or give up completely. I'll maybe try to create a roadmap when I'm done with all the initial architectural decisions and probably make the meta repo public as a starter.
 
-🟢 Create an organization, repositories, product nomenclature, and logos  
-🟢 Create a charm template for charmarr charms   
-🟢 Update org level community guidelines and consolidate licenses   
-🟠 Complete architectural design records for charmarr  
-⚪ Create the charmarr topology data model in `charmarr-lib`  
-⚪ Create the shared reconciler in `charmarr-lib`  
-⚪ Create `tailscale-connector-k8s` charm   
-⚪ TBD  
+🟢 Create an organization, repositories, product nomenclature, and logos<br>
+🟢 Create a charm template for charmarr charms<br>
+🟢 Update org level community guidelines and consolidate licenses<br>
+🟠 Complete architectural design records for charmarr<br>
+⚪ Create the charmarr topology data model in `charmarr-lib`<br>
+⚪ Create the shared reconciler in `charmarr-lib`<br>
+⚪ Create `tailscale-connector-k8s` charm<br>
+⚪ TBD<br>
 
 (If this generates some/any interest, I'll open discussions for this organization.)
 
