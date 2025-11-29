@@ -180,14 +180,14 @@ This will probably be the lowest priority ever, if I even get to it. This is the
 
 But like I said, this might change. I might add more products, remove or deprecate products even before they go live, or give up completely. I'll maybe try to create a roadmap when I'm done with all the initial architectural decisions and probably make the meta repo public as a starter.
 
-🟢 Create an organization, repositories, product nomenclature, and logos
-🟢 Create a charm template for charmarr charms
-🟢 Update org level community guidelines and consolidate licenses
-🟠 Complete architectural design records for charmarr
-⚪ Create the charmarr topology data model in `charmarr-lib`
-⚪ Create the shared reconciler in `charmarr-lib`
-⚪ Create `tailscale-connector-k8s` charm
-⚪ TBD
+🟢 Create an organization, repositories, product nomenclature, and logos. 
+🟢 Create a charm template for charmarr charms. 
+🟢 Update org level community guidelines and consolidate licenses. 
+🟠 Complete architectural design records for charmarr. 
+⚪ Create the charmarr topology data model in `charmarr-lib`. 
+⚪ Create the shared reconciler in `charmarr-lib`. 
+⚪ Create `tailscale-connector-k8s` charm. 
+⚪ TBD. 
 
 (If this generates some/any interest, I'll open discussions for this organization.)
 
