@@ -188,9 +188,8 @@ But like I said, this might change. I might add more products, remove or depreca
 🟢 Create an organization, repositories, product nomenclature, and logos<br>
 🟢 Create a charm template for charmarr charms<br>
 🟢 Update org level community guidelines and consolidate licenses<br>
-🟠 Complete architectural design records for charmarr<br>
-⚪ Create the charmarr topology data model in `charmarr-lib`<br>
-⚪ Create the shared reconciler in `charmarr-lib`<br>
+🟢 Complete architectural design records for charmarr<br>
+🟠 Validate VXLAN design<br>
 ⚪ Create `tailscale-connector-k8s` charm<br>
 ⚪ TBD<br>
 
