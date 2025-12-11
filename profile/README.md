@@ -189,7 +189,8 @@ But like I said, this might change. I might add more products, remove or depreca
 🟢 Create a charm template for charmarr charms<br>
 🟢 Update org level community guidelines and consolidate licenses<br>
 🟢 Complete architectural design records for charmarr<br>
-🟠 Validate VXLAN design<br>
+🟢 Validate VXLAN design<br>
+🟠 Create the `gluetun-k8s` charm with the vpn charm library<br>
 ⚪ Create `tailscale-connector-k8s` charm<br>
 ⚪ TBD<br>
 
