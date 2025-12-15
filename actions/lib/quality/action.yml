@@ -1,0 +1,55 @@
+name: 'Library Quality Checks'
+description: 'Run lint, format check, type check, and tests'
+
+inputs:
+  paths:
+    description: 'Paths to check (space-separated)'
+    required: true
+  test-paths:
+    description: 'Test paths (space-separated, empty to skip tests)'
+    required: false
+    default: ''
+  coverage-source:
+    description: 'Coverage source paths (comma-separated, empty to skip coverage)'
+    required: false
+    default: ''
+  skip:
+    description: 'Checks to skip (comma-separated: lint,format,typecheck,test)'
+    required: false
+    default: ''
+  working-directory:
+    description: 'Working directory'
+    required: false
+    default: '.'
+
+runs:
+  using: composite
+  steps:
+    - name: Lint
+      if: "!contains(inputs.skip, 'lint')"
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: uv run ruff check ${{ inputs.paths }}
+
+    - name: Format check
+      if: "!contains(inputs.skip, 'format')"
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: uv run ruff format --check ${{ inputs.paths }}
+
+    - name: Type check
+      if: "!contains(inputs.skip, 'typecheck')"
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: uv run pyright ${{ inputs.paths }}
+
+    - name: Test
+      if: "!contains(inputs.skip, 'test') && inputs.test-paths != ''"
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ -n "${{ inputs.coverage-source }}" ]; then
+          uv run pytest ${{ inputs.test-paths }} --cov=${{ inputs.coverage-source }} --cov-report=xml
+        else
+          uv run pytest ${{ inputs.test-paths }}
+        fi

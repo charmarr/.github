@@ -1,0 +1,30 @@
+name: 'Setup Library Environment'
+description: 'Setup development environment for Python libraries'
+
+inputs:
+  version:
+    description: 'Python version'
+    required: false
+    default: '3.12'
+  working-directory:
+    description: 'Working directory'
+    required: false
+    default: '.'
+
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+        cache-dependency-glob: "**/uv.lock"
+
+    - name: Install Python
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: uv python install ${{ inputs.version }}
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: uv sync --frozen

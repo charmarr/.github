@@ -1,0 +1,22 @@
+name: 'Publish Library to PyPI'
+description: 'Build and publish a Python library package'
+
+inputs:
+  package-name:
+    description: 'Package name for uv build'
+    required: true
+  package-dir:
+    description: 'Package directory containing dist/'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Build package
+      shell: bash
+      run: uv build --package ${{ inputs.package-name }}
+
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        packages-dir: ${{ inputs.package-dir }}/dist/
