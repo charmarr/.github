@@ -10,40 +10,26 @@
   <img src="https://img.shields.io/badge/media-automation-purple?logo=vlcmediaplayer" alt="Media Automation">
 </p>
 
-> A charmed, Kubernetes-native servarr stack for the masochists who want scalable, reliable, observable, and frankly over-engineered media automation. Because why solve problems simply when you can suffer beautifully?
-
 ---
 
-## The Problem
+A collection of charmed ARR services for self-hosted media server setups that run on Kubernetes substrate.
 
-After two failed attempts at building a self-hosted media server (no automation, zero observability, no backups, questionable security), I noticed a pattern across all ARR solutions: **deployment is easy, but cross-application configuration remains painful**. Add Kubernetes to the mix and you're raw-dogging PVs, PVCs, NetworkPolicies, and storage backends. The [k8s@home](https://github.com/k8s-at-home) project was amazing but deprecated. Most K8s-based ARR solutions share the same fate.
+## Why charms?
 
-## The Solution: Juju Charms
-
-[Juju charms](https://canonical.com/juju) have [relations](https://documentation.ubuntu.com/juju/3.6/reference/relation/) - when you integrate Radarr with SABnzbd, they automatically configure themselves. No manual setup.
+[Juju charms](https://canonical.com/juju) have a concept called [relations](https://documentation.ubuntu.com/juju/3.6/reference/relation/).
 
 **What this enables:**
-- Automated cross-application configuration
+- Automated cross-application configuration. For ex. just `relate` radarr with sabnzbd and they configure themselves with each other's information
 - Thin wrappers that handle K8s complexity (networking, storage, ingress)
 - Modular opt-in features (observability, service mesh, secrets management)
 
 ## What is Charmarr?
 
-Charmarr is **not a media server** - it's a **media server management system**. It provides charmed versions of ARR apps with:
+Charmarr is a media server management system. It provides charmed versions of ARR apps with:
 
 - **Automated configuration** via Juju relations
 - **Terraform/Terragrunt** for lifecycle management
-- **Optional integrations** with COS (observability), service mesh, Vault, IAM
-
----
-
-## The Ecosystem
-
-| Project | Description |
-|---------|-------------|
-| **Charmarr** | The charmed servarr stack |
-| **Flintarr** | AI agent for stack management (state, logs, metrics) |
-| **Configuratarr** | TUI for Terraform configuration |
+- **Optional integrations** with other charmed solutions like observability, service mesh, Vault, IAM
 
 ---
 
@@ -62,7 +48,7 @@ Charmarr is **not a media server** - it's a **media server management system**. 
 
 ## Is This Overkill?
 
-**Yes.** This is for intermediate to advanced homelab users with Kubernetes knowledge. If you want something simpler, check out [yams](https://yams.media/). If you want to over-engineer your media server while learning about K8s, charms, and service meshes... welcome home.
+**Yes.** If you want something simpler, check out [yams](https://yams.media/).
 
 ---
 
@@ -80,7 +66,5 @@ Contributions welcome! Alpha project - expect breaking changes.
 Use it, fork it, keep it open. 🌸
 
 ---
-
-*Built with ❤️, spite, and a little too much free time*
 
 [Mandatory xkcd](https://xkcd.com/2021)
