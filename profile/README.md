@@ -14,15 +14,6 @@
 
 A collection of charmed ARR services for self-hosted media server setups that run on Kubernetes substrate.
 
-## Why charms?
-
-[Juju charms](https://canonical.com/juju) have a concept called [relations](https://documentation.ubuntu.com/juju/3.6/reference/relation/).
-
-**What this enables:**
-- Automated cross-application configuration. For ex. just `relate` radarr with sabnzbd and they configure themselves with each other's information
-- Thin wrappers that handle K8s complexity (networking, storage, ingress)
-- Modular opt-in features (observability, service mesh, secrets management)
-
 ## What is Charmarr?
 
 Charmarr is a media server management system. It provides charmed versions of ARR apps with:
@@ -30,6 +21,15 @@ Charmarr is a media server management system. It provides charmed versions of AR
 - **Automated configuration** via Juju relations
 - **Terraform/Terragrunt** for lifecycle management
 - **Optional integrations** with other charmed solutions like observability, service mesh, Vault, IAM
+
+## Why charms?
+
+[Juju charms](https://canonical.com/juju) have a concept called [relations](https://documentation.ubuntu.com/juju/3.6/reference/relation/).
+
+**What this enables:**
+- Automated cross-application configuration. For ex. just `relate` radarr with sabnzbd and they configure themselves with each other's information
+- Thin wrappers that handle K8s complexity (networking, storage, ingress)
+- Modular opt-in features because of existing mature charms (observability, service mesh, secrets management)
 
 ---
 
