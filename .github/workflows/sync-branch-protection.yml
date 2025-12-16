@@ -9,18 +9,18 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Generate GitHub App token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.CHARMARR_BOT_APP_ID }}
           private-key: ${{ secrets.CHARMARR_BOT_APP_PRIVATE_KEY }}
           owner: charmarr
 
       - name: Install just
-        uses: extractions/setup-just@v2
+        uses: extractions/setup-just@v3
 
       - name: Sync rulesets
         env:
