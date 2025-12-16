@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ./actions/lib/setup
+      - uses: charmarr/.github/actions/lib/setup@v1
 
       - name: Build package
         run: uv build --package ${{ inputs.package-name }}
