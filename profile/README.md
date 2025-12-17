@@ -40,7 +40,8 @@ Charmarr is a media server management system. It provides charmed versions of AR
 🟢 Community guidelines & licenses<br>
 🟢 Architecture Decision Records<br>
 🟢 VXLAN design validation<br>
-🟠 Shared charm libraries<br>
+🟢 Shared charm libraries<br>
+🟠 `charmarr-storage-k8s` charm<br>
 ⚪ `gluetun-k8s` charm<br>
 ⚪ `tailscale-connector-k8s` charm<br>
 
