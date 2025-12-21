@@ -32,26 +32,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  detect-changes:
-    name: Detect changes
-    runs-on: ubuntu-latest
-    outputs:
-      changed: ${{ steps.detect.outputs.changed }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - id: detect
-        uses: charmarr/.github/actions/charm/detect-changes@v1
-        with:
-          charm-path: ${{ inputs.charm-path }}
-
   build:
     name: Build Charm
-    needs: detect-changes
-    if: needs.detect-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.artifact-name.outputs.name }}
     steps:
       - uses: actions/checkout@v4
 
@@ -59,9 +44,19 @@ jobs:
         with:
           lxd: "true"
 
+      - id: artifact-name
+        shell: bash
+        run: |
+          if [[ "${{ inputs.charm-path }}" == "." ]]; then
+            echo "name=charm-${{ github.event.repository.name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=charm-$(echo '${{ inputs.charm-path }}' | tr '/' '-')" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: charmarr/.github/actions/charm/build@v1
         with:
           charm-path: ${{ inputs.charm-path }}
+          artifact-name: ${{ steps.artifact-name.outputs.name }}
 
   integration-matrix:
     name: Define integration matrix
@@ -98,7 +93,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: charm
+          name: ${{ needs.build.outputs.artifact-name }}
           path: ${{ inputs.charm-path }}
 
       - name: Clean runner caches
@@ -137,6 +132,7 @@ jobs:
         with:
           charm-path: ${{ inputs.charm-path }}
           channel: ${{ inputs.track }}/edge
+          artifact-name: ${{ needs.build.outputs.artifact-name }}
           dry-run: ${{ inputs.dry-run }}
         env:
           CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}

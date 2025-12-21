@@ -8,6 +8,9 @@ inputs:
   channel:
     description: Charmhub channel to release to (e.g., "latest/edge", "1/stable")
     required: true
+  artifact-name:
+    description: Name of the artifact to download
+    default: charm
   dry-run:
     description: Skip actual upload/release (for testing)
     default: "false"
@@ -23,7 +26,7 @@ runs:
     - name: Download charm artifact
       uses: actions/download-artifact@v4
       with:
-        name: charm
+        name: ${{ inputs.artifact-name }}
         path: ${{ inputs.charm-path }}
 
     - name: Publish to Charmhub
