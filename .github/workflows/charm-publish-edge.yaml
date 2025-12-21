@@ -1,0 +1,133 @@
+name: Publish Charm to Edge
+
+on:
+  workflow_call:
+    inputs:
+      charm-path:
+        description: Path to charm directory (use "." for standalone repos)
+        type: string
+        default: "."
+      track:
+        description: Charmhub track (e.g., "latest", "1", "2")
+        type: string
+        default: "latest"
+      run-integration:
+        description: Run integration tests before publishing
+        type: boolean
+        default: true
+      tag-terraform:
+        description: Auto-tag terraform module if VERSION changed
+        type: boolean
+        default: true
+      dry-run:
+        description: Skip actual publish (for testing)
+        type: boolean
+        default: false
+    secrets:
+      CHARMHUB_TOKEN:
+        required: true
+
+concurrency:
+  group: publish-${{ github.ref }}-${{ inputs.charm-path }}
+  cancel-in-progress: true
+
+jobs:
+  detect-changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.detect.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: detect
+        uses: charmarr/.github/actions/charm/detect-changes@main
+        with:
+          charm-path: ${{ inputs.charm-path }}
+
+  build:
+    name: Build Charm
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: charmarr/.github/actions/charm/setup@main
+        with:
+          lxd: "true"
+
+      - uses: charmarr/.github/actions/charm/build@main
+        with:
+          charm-path: ${{ inputs.charm-path }}
+
+  integration:
+    name: Integration Tests
+    needs: build
+    if: inputs.run-integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: charm
+          path: ${{ inputs.charm-path }}
+
+      - uses: charmarr/.github/actions/charm/setup@main
+        with:
+          juju: "true"
+
+      - name: Run integration tests
+        working-directory: ${{ inputs.charm-path }}
+        run: |
+          set -euo pipefail
+          charm_file="$(find . -maxdepth 1 -name '*.charm' -print -quit)"
+          if [[ -z "$charm_file" ]]; then
+            echo "::error::No .charm file found"
+            exit 1
+          fi
+          export CHARM_PATH
+          CHARM_PATH="$(realpath "$charm_file")"
+          uvx tox -e integration
+
+  publish:
+    name: Publish to Edge
+    needs: [build, integration]
+    if: always() && needs.build.result == 'success' && (needs.integration.result == 'success' || needs.integration.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: charmarr/.github/actions/charm/setup@main
+
+      - uses: charmarr/.github/actions/charm/publish@main
+        with:
+          charm-path: ${{ inputs.charm-path }}
+          channel: ${{ inputs.track }}/edge
+          dry-run: ${{ inputs.dry-run }}
+        env:
+          CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}
+
+  tag-terraform:
+    name: Tag Terraform Module
+    needs: publish
+    if: inputs.tag-terraform
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: charmarr/.github/actions/charm/setup@main
+        with:
+          charmcraft: "false"
+
+      - uses: charmarr/.github/actions/charm/tag-terraform@main
+        with:
+          charm-path: ${{ inputs.charm-path }}
+          dry-run: ${{ inputs.dry-run }}

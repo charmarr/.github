@@ -1,0 +1,47 @@
+name: Build Charm
+description: Pack charm with charmcraft and upload as artifact
+
+inputs:
+  charm-path:
+    description: Path to charm directory
+    required: true
+  artifact-name:
+    description: Name for the uploaded artifact
+    default: charm
+
+outputs:
+  charm-file:
+    description: Path to the built .charm file
+    value: ${{ steps.build.outputs.charm-file }}
+
+runs:
+  using: composite
+  steps:
+    - name: Cache charmcraft wheels
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/snap/charmcraft/common/cache/charmcraft
+        key: charmcraft-wheels-${{ hashFiles(format('{0}/uv.lock', inputs.charm-path)) }}
+        restore-keys: |
+          charmcraft-wheels-
+
+    - name: Pack charm
+      id: build
+      shell: bash
+      working-directory: ${{ inputs.charm-path }}
+      run: |
+        set -euo pipefail
+        charmcraft pack -v
+        charm_file="$(find . -maxdepth 1 -name '*.charm' -print -quit)"
+        if [[ -z "$charm_file" ]]; then
+          echo "::error::No .charm file found after pack"
+          exit 1
+        fi
+        echo "charm-file=$(realpath "$charm_file")" >> "$GITHUB_OUTPUT"
+
+    - name: Upload charm artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ inputs.charm-path }}/*.charm
+        if-no-files-found: error

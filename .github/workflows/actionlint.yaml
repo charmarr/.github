@@ -1,0 +1,64 @@
+name: Validate Workflows
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "actions/**"
+
+jobs:
+  actionlint:
+    name: Actionlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install actionlint
+        run: |
+          bash <(curl -sL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          echo "$PWD" >> "$GITHUB_PATH"
+
+      - name: Run actionlint on workflows
+        run: actionlint .github/workflows/*.yaml
+
+  shellcheck:
+    name: Shellcheck Actions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yq
+        run: sudo snap install yq
+
+      - name: Shellcheck composite actions
+        shell: bash
+        run: |
+          set -euo pipefail
+          errors=0
+
+          shopt -s nullglob
+          for action in actions/*/action.yml actions/*/*/action.yml; do
+            echo "Checking: $action"
+
+            count=$(yq '.runs.steps | length' "$action" 2>/dev/null || echo 0)
+            for i in $(seq 0 $((count - 1))); do
+              shell=$(yq ".runs.steps[$i].shell" "$action" 2>/dev/null || echo "")
+              if [[ "$shell" == "bash" ]]; then
+                script=$(yq ".runs.steps[$i].run" "$action")
+                if [[ -n "$script" && "$script" != "null" ]]; then
+                  # Write script to temp file to avoid pipe issues
+                  tmpfile=$(mktemp)
+                  echo "$script" > "$tmpfile"
+                  # Replace GitHub Actions expressions with shell variable placeholder
+                  perl -pi -e 's/\$\{\{[^}]*\}\}/\$_GHA/g' "$tmpfile"
+                  shellcheck -s bash -S warning "$tmpfile" || errors=$((errors + 1))
+                  rm -f "$tmpfile"
+                fi
+              fi
+            done
+          done
+
+          if [[ $errors -gt 0 ]]; then
+            echo "::error::Found $errors shellcheck issues"
+            exit 1
+          fi

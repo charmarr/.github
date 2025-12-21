@@ -1,0 +1,110 @@
+name: Charm CI
+
+on:
+  workflow_call:
+    inputs:
+      charm-path:
+        description: Path to charm directory (use "." for standalone repos)
+        type: string
+        default: "."
+      run-lint:
+        description: Run lint checks
+        type: boolean
+        default: true
+      run-static:
+        description: Run static type checks
+        type: boolean
+        default: true
+      run-unit:
+        description: Run unit tests
+        type: boolean
+        default: true
+      run-terraform-validate:
+        description: Validate Terraform files
+        type: boolean
+        default: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.charm-path }}
+  cancel-in-progress: true
+
+jobs:
+  detect-changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.detect.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: detect
+        uses: charmarr/.github/actions/charm/detect-changes@main
+        with:
+          charm-path: ${{ inputs.charm-path }}
+
+  lint:
+    name: Lint
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true' && inputs.run-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: charmarr/.github/actions/charm/setup@main
+
+      - name: Run lint
+        working-directory: ${{ inputs.charm-path }}
+        run: uvx tox -e lint
+
+  static:
+    name: Static Analysis
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true' && inputs.run-static
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: charmarr/.github/actions/charm/setup@main
+
+      - name: Run static checks
+        working-directory: ${{ inputs.charm-path }}
+        run: uvx tox -e static
+
+  unit:
+    name: Unit Tests
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true' && inputs.run-unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: charmarr/.github/actions/charm/setup@main
+
+      - name: Run unit tests
+        working-directory: ${{ inputs.charm-path }}
+        run: uvx tox -e unit
+
+  terraform-validate:
+    name: Validate Terraform
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true' && inputs.run-terraform-validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install OpenTofu
+        run: sudo snap install opentofu --classic
+
+      - name: Validate Terraform
+        working-directory: ${{ inputs.charm-path }}
+        run: |
+          tofu fmt -check -recursive -diff
+          if [ -d "terraform" ]; then
+            cd terraform
+            tofu init -backend=false
+            tofu validate
+          else
+            echo "No terraform directory found, skipping validation"
+          fi

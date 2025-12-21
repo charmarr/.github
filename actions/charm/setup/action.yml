@@ -1,0 +1,56 @@
+name: Setup Charm Environment
+description: Install tools for charm development and CI
+
+inputs:
+  charmcraft:
+    description: Install charmcraft
+    default: "true"
+  lxd:
+    description: Setup LXD for building charms
+    default: "false"
+  juju:
+    description: Setup Juju and MicroK8s via concierge (for integration tests)
+    default: "false"
+  juju-channel:
+    description: Juju snap channel
+    default: "3.6/stable"
+  microk8s-channel:
+    description: MicroK8s snap channel
+    default: "1.32-strict/stable"
+  charmcraft-channel:
+    description: Charmcraft snap channel
+    default: "latest/stable"
+
+runs:
+  using: composite
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        enable-cache: true
+        cache-dependency-glob: "**/uv.lock"
+
+    - name: Install yq
+      shell: bash
+      run: sudo snap install yq
+
+    - name: Install charmcraft
+      if: inputs.charmcraft == 'true'
+      shell: bash
+      run: sudo snap install charmcraft --classic --channel="${{ inputs.charmcraft-channel }}"
+
+    - name: Setup LXD
+      if: inputs.lxd == 'true'
+      uses: canonical/setup-lxd@main
+
+    - name: Setup Juju and MicroK8s via concierge
+      if: inputs.juju == 'true'
+      shell: bash
+      env:
+        CONCIERGE_JUJU_CHANNEL: ${{ inputs.juju-channel }}
+        CONCIERGE_MICROK8S_CHANNEL: ${{ inputs.microk8s-channel }}
+        CONCIERGE_CHARMCRAFT_CHANNEL: ${{ inputs.charmcraft-channel }}
+      run: |
+        sudo snap install concierge --classic
+        sudo concierge prepare -p microk8s --extra-snaps=astral-uv
+        sudo snap install kubectl --classic

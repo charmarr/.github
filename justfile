@@ -1,5 +1,65 @@
 # Charmarr org automation recipes
 
+# Default recipe - list available recipes
+default:
+    @just --list
+
+# =============================================================================
+# Development
+# =============================================================================
+
+# Lint all workflow files
+actionlint:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if command -v actionlint &>/dev/null; then
+        actionlint .github/workflows/*.yaml
+    elif [[ -x "$HOME/go/bin/actionlint" ]]; then
+        "$HOME/go/bin/actionlint" .github/workflows/*.yaml
+    else
+        echo "actionlint not found. Install with: go install github.com/rhysd/actionlint/cmd/actionlint@latest"
+        exit 1
+    fi
+
+# Shellcheck all composite actions
+shellcheck-actions:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    errors=0
+
+    shopt -s nullglob
+    for action in actions/*/action.yml actions/*/*/action.yml; do
+        echo "Checking: $action"
+
+        count=$(yq '.runs.steps | length' "$action" 2>/dev/null || echo 0)
+        for i in $(seq 0 $((count - 1))); do
+            shell=$(yq ".runs.steps[$i].shell" "$action" 2>/dev/null || echo "")
+            if [[ "$shell" == "bash" ]]; then
+                script=$(yq ".runs.steps[$i].run" "$action")
+                if [[ -n "$script" && "$script" != "null" ]]; then
+                    tmpfile=$(mktemp)
+                    echo "$script" > "$tmpfile"
+                    perl -pi -e 's/\$\{\{[^}]*\}\}/\$_GHA/g' "$tmpfile"
+                    shellcheck -s bash -S warning "$tmpfile" || errors=$((errors + 1))
+                    rm -f "$tmpfile"
+                fi
+            fi
+        done
+    done
+
+    if [[ $errors -gt 0 ]]; then
+        echo "Found $errors shellcheck issues"
+        exit 1
+    fi
+    echo "All actions passed shellcheck"
+
+# Run all linting (actionlint + shellcheck)
+lint: actionlint shellcheck-actions
+
+# =============================================================================
+# Org Management
+# =============================================================================
+
 # Sync branch rulesets to all repos
 sync-rulesets:
     #!/usr/bin/env bash

@@ -1,0 +1,64 @@
+name: Promote Charm to Stable
+
+on:
+  workflow_call:
+    inputs:
+      charm-path:
+        description: Path to charm directory
+        type: string
+        default: "."
+      track:
+        description: Charmhub track (e.g., "latest", "1", "2")
+        type: string
+        default: "latest"
+      dry-run:
+        description: Skip actual promotion (for testing)
+        type: boolean
+        default: false
+    secrets:
+      CHARMHUB_TOKEN:
+        required: true
+
+jobs:
+  promote:
+    name: Promote Edge → Stable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: charmarr/.github/actions/charm/setup@main
+
+      - name: Promote to stable
+        working-directory: ${{ inputs.charm-path }}
+        env:
+          CHARMCRAFT_AUTH: ${{ secrets.CHARMHUB_TOKEN }}
+          TRACK: ${{ inputs.track }}
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${CHARMCRAFT_AUTH:-}" ]]; then
+            echo "::error::CHARMHUB_TOKEN secret not set"
+            exit 1
+          fi
+
+          charm_name=$(yq .name charmcraft.yaml)
+
+          # Get current edge revision
+          edge_info=$(charmcraft status "$charm_name" --format=json | jq -r ".[] | select(.track == \"$TRACK\") | .mappings[] | select(.channel == \"$TRACK/edge\")")
+          edge_revision=$(echo "$edge_info" | jq -r '.revision')
+
+          if [[ -z "$edge_revision" || "$edge_revision" == "null" ]]; then
+            echo "::error::No revision found in $TRACK/edge"
+            exit 1
+          fi
+
+          echo "Edge revision: $edge_revision"
+
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "DRY-RUN: Would promote $charm_name revision $edge_revision to $TRACK/stable"
+            exit 0
+          fi
+
+          charmcraft release "$charm_name" --revision="$edge_revision" --channel="$TRACK/stable"
+          echo "Promoted revision $edge_revision to $TRACK/stable"

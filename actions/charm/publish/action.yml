@@ -1,0 +1,69 @@
+name: Publish Charm to Charmhub
+description: Upload charm and release to a channel
+
+inputs:
+  charm-path:
+    description: Path to charm directory
+    required: true
+  channel:
+    description: Charmhub channel to release to (e.g., "latest/edge", "1/stable")
+    required: true
+  dry-run:
+    description: Skip actual upload/release (for testing)
+    default: "false"
+
+outputs:
+  revision:
+    description: The uploaded charm revision
+    value: ${{ steps.publish.outputs.revision }}
+
+runs:
+  using: composite
+  steps:
+    - name: Download charm artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: charm
+        path: ${{ inputs.charm-path }}
+
+    - name: Publish to Charmhub
+      id: publish
+      shell: bash
+      working-directory: ${{ inputs.charm-path }}
+      env:
+        CHANNEL: ${{ inputs.channel }}
+        DRY_RUN: ${{ inputs.dry-run }}
+        # CHARMHUB_TOKEN must be set by the calling workflow
+        CHARMCRAFT_AUTH: ${{ env.CHARMHUB_TOKEN }}
+      run: |
+        set -euo pipefail
+
+        if [[ -z "${CHARMCRAFT_AUTH:-}" ]]; then
+          echo "::error::CHARMHUB_TOKEN environment variable not set"
+          exit 1
+        fi
+
+        charm_file="$(find . -maxdepth 1 -name '*.charm' -print -quit)"
+        if [[ -z "$charm_file" ]]; then
+          echo "::error::No .charm file found"
+          exit 1
+        fi
+        charm_name=$(yq .name charmcraft.yaml)
+
+        if [[ "$DRY_RUN" == "true" ]]; then
+          echo "DRY-RUN: Would upload $charm_file"
+          echo "DRY-RUN: Would release $charm_name to $CHANNEL"
+          echo "revision=dry-run" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        # Upload charm
+        upload_result=$(charmcraft upload "$charm_file" --format=json)
+        revision=$(echo "$upload_result" | jq -r '.revision')
+        echo "Uploaded revision: $revision"
+
+        # Release to channel
+        charmcraft release "$charm_name" --revision="$revision" --channel="$CHANNEL"
+        echo "Released to: $CHANNEL"
+
+        echo "revision=$revision" >> "$GITHUB_OUTPUT"

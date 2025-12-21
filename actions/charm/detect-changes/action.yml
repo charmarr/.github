@@ -1,0 +1,39 @@
+name: Detect Charm Changes
+description: Check if charm path has changes (monorepo-aware)
+
+inputs:
+  charm-path:
+    description: Path to charm directory (use "." for standalone repos)
+    required: true
+  base-ref:
+    description: Base ref to compare against
+    default: ${{ github.event.pull_request.base.sha || 'HEAD~1' }}
+
+outputs:
+  changed:
+    description: Whether the charm has changes
+    value: ${{ steps.check.outputs.changed }}
+
+runs:
+  using: composite
+  steps:
+    - id: check
+      shell: bash
+      env:
+        CHARM_PATH: ${{ inputs.charm-path }}
+        BASE_REF: ${{ inputs.base-ref }}
+      run: |
+        set -euo pipefail
+
+        # For standalone repos (charm-path is "."), always consider changed
+        if [[ "$CHARM_PATH" == "." ]]; then
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        # For monorepo, check if charm path has changes
+        if git diff --name-only "${BASE_REF}"...HEAD 2>/dev/null | grep -q "^${CHARM_PATH}/"; then
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        fi
