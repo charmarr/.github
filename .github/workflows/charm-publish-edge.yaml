@@ -43,7 +43,7 @@ jobs:
           fetch-depth: 0
 
       - id: detect
-        uses: charmarr/.github/actions/charm/detect-changes@main
+        uses: charmarr/.github/actions/charm/detect-changes@v1
         with:
           charm-path: ${{ inputs.charm-path }}
 
@@ -55,11 +55,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
         with:
           lxd: "true"
 
-      - uses: charmarr/.github/actions/charm/build@main
+      - uses: charmarr/.github/actions/charm/build@v1
         with:
           charm-path: ${{ inputs.charm-path }}
 
@@ -76,7 +76,7 @@ jobs:
           name: charm
           path: ${{ inputs.charm-path }}
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
         with:
           juju: "true"
 
@@ -101,9 +101,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
 
-      - uses: charmarr/.github/actions/charm/publish@main
+      - uses: charmarr/.github/actions/charm/publish@v1
         with:
           charm-path: ${{ inputs.charm-path }}
           channel: ${{ inputs.track }}/edge
@@ -123,11 +123,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
         with:
           charmcraft: "false"
 
-      - uses: charmarr/.github/actions/charm/tag-terraform@main
+      - uses: charmarr/.github/actions/charm/tag-terraform@v1
         with:
           charm-path: ${{ inputs.charm-path }}
           dry-run: ${{ inputs.dry-run }}

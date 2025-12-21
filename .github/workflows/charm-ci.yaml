@@ -40,7 +40,7 @@ jobs:
           fetch-depth: 0
 
       - id: detect
-        uses: charmarr/.github/actions/charm/detect-changes@main
+        uses: charmarr/.github/actions/charm/detect-changes@v1
         with:
           charm-path: ${{ inputs.charm-path }}
 
@@ -52,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
 
       - name: Run lint
         working-directory: ${{ inputs.charm-path }}
@@ -66,7 +66,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
 
       - name: Run static checks
         working-directory: ${{ inputs.charm-path }}
@@ -80,7 +80,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
 
       - name: Run unit tests
         working-directory: ${{ inputs.charm-path }}
