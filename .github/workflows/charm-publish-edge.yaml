@@ -43,7 +43,7 @@ jobs:
           fetch-depth: 0
 
       - id: detect
-        uses: charmarr/.github/actions/charm/detect-changes@main
+        uses: charmarr/.github/actions/charm/detect-changes@v1
         with:
           charm-path: ${{ inputs.charm-path }}
 
@@ -55,19 +55,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
         with:
           lxd: "true"
 
-      - uses: charmarr/.github/actions/charm/build@main
+      - uses: charmarr/.github/actions/charm/build@v1
         with:
           charm-path: ${{ inputs.charm-path }}
 
-  integration:
-    name: Integration Tests
+  integration-matrix:
+    name: Define integration matrix
     needs: build
     if: inputs.run-integration
     runs-on: ubuntu-latest
+    outputs:
+      suites: ${{ steps.suites.outputs.suites }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate matrix
+        id: suites
+        working-directory: ${{ inputs.charm-path }}
+        run: |
+          if [[ -d "tests/integration" ]]; then
+            list="$(find tests/integration -name 'test_*.py' -printf '%f\n' | jq -R -n -c '[inputs]')"
+          else
+            list="[]"
+          fi
+          echo "suites=$list" >> "$GITHUB_OUTPUT"
+
+  integration:
+    name: Integration (${{ matrix.suite }})
+    needs: [build, integration-matrix]
+    if: inputs.run-integration && needs.integration-matrix.outputs.suites != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ${{ fromJSON(needs.integration-matrix.outputs.suites) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -76,7 +101,12 @@ jobs:
           name: charm
           path: ${{ inputs.charm-path }}
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - name: Clean runner caches
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+
+      - uses: charmarr/.github/actions/charm/setup@v1
         with:
           juju: "true"
 
@@ -91,19 +121,19 @@ jobs:
           fi
           export CHARM_PATH
           CHARM_PATH="$(realpath "$charm_file")"
-          uvx tox -e integration
+          uvx tox -e integration -- -k "${{ matrix.suite }}"
 
   publish:
     name: Publish to Edge
-    needs: [build, integration]
+    needs: [build, integration-matrix, integration]
     if: always() && needs.build.result == 'success' && (needs.integration.result == 'success' || needs.integration.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
 
-      - uses: charmarr/.github/actions/charm/publish@main
+      - uses: charmarr/.github/actions/charm/publish@v1
         with:
           charm-path: ${{ inputs.charm-path }}
           channel: ${{ inputs.track }}/edge
@@ -123,11 +153,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
         with:
           charmcraft: "false"
 
-      - uses: charmarr/.github/actions/charm/tag-terraform@main
+      - uses: charmarr/.github/actions/charm/tag-terraform@v1
         with:
           charm-path: ${{ inputs.charm-path }}
           dry-run: ${{ inputs.dry-run }}

@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: charmarr/.github/actions/charm/setup@main
+      - uses: charmarr/.github/actions/charm/setup@v1
 
       - name: Promote to stable
         working-directory: ${{ inputs.charm-path }}
