@@ -129,6 +129,7 @@ jobs:
           path: ${{ inputs.charm-path }}
 
       - name: Clean runner caches
+        continue-on-error: true
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
           sudo docker image prune --all --force
