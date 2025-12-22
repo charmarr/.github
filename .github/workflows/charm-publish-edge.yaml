@@ -134,6 +134,13 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
           sudo docker image prune --all --force
 
+      - name: Clean stale juju state
+        if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
+        continue-on-error: true
+        run: |
+          snap list concierge && sudo concierge restore || true
+          rm -rf ~/.local/share/juju
+
       - uses: charmarr/.github/actions/charm/setup@v1
         with:
           juju: "true"
