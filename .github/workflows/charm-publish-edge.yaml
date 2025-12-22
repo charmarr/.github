@@ -27,10 +27,22 @@ on:
         description: Additional apt packages for integration tests (comma-separated)
         type: string
         default: ""
-      microk8s-channel:
-        description: MicroK8s snap channel
+      substrate:
+        description: K8s substrate (microk8s or k8s)
+        type: string
+        default: "microk8s"
+      substrate-channel:
+        description: Substrate snap channel
         type: string
         default: "1.32-strict/stable"
+      automatically-retry-hooks:
+        description: Whether Juju should automatically retry failed hooks
+        type: boolean
+        default: true
+      integration-runner:
+        description: Runner for integration tests (e.g., "ubuntu-latest" or self-hosted tag)
+        type: string
+        default: "ubuntu-latest"
     secrets:
       CHARMHUB_TOKEN:
         required: true
@@ -91,7 +103,7 @@ jobs:
     name: Integration (${{ matrix.suite }})
     needs: [build, integration-matrix]
     if: inputs.run-integration && needs.integration-matrix.outputs.suites != '[]'
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.integration-runner }}
     strategy:
       fail-fast: false
       matrix:
@@ -113,7 +125,9 @@ jobs:
         with:
           juju: "true"
           extra-debs: ${{ inputs.extra-debs }}
-          microk8s-channel: ${{ inputs.microk8s-channel }}
+          substrate: ${{ inputs.substrate }}
+          substrate-channel: ${{ inputs.substrate-channel }}
+          automatically-retry-hooks: ${{ inputs.automatically-retry-hooks }}
 
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}

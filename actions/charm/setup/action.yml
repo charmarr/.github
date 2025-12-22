@@ -9,20 +9,26 @@ inputs:
     description: Setup LXD for building charms
     default: "false"
   juju:
-    description: Setup Juju and MicroK8s via concierge (for integration tests)
+    description: Setup Juju and K8s substrate via concierge
     default: "false"
+  substrate:
+    description: K8s substrate (microk8s or k8s)
+    default: "microk8s"
+  substrate-channel:
+    description: Substrate snap channel
+    default: "1.32-strict/stable"
   juju-channel:
     description: Juju snap channel
     default: "3.6/stable"
-  microk8s-channel:
-    description: MicroK8s snap channel
-    default: "1.32-strict/stable"
   charmcraft-channel:
     description: Charmcraft snap channel
     default: "latest/stable"
   extra-debs:
     description: Additional apt packages to install (comma-separated)
     default: ""
+  automatically-retry-hooks:
+    description: Whether Juju should automatically retry failed hooks
+    default: "true"
 
 runs:
   using: composite
@@ -46,12 +52,13 @@ runs:
       if: inputs.lxd == 'true'
       uses: canonical/setup-lxd@main
 
-    - name: Setup Juju and MicroK8s via concierge
+    - name: Setup Juju and K8s substrate via concierge
       if: inputs.juju == 'true'
       shell: bash
       env:
         CONCIERGE_JUJU_CHANNEL: ${{ inputs.juju-channel }}
-        CONCIERGE_MICROK8S_CHANNEL: ${{ inputs.microk8s-channel }}
+        CONCIERGE_MICROK8S_CHANNEL: ${{ inputs.substrate-channel }}
+        CONCIERGE_K8S_CHANNEL: ${{ inputs.substrate-channel }}
         CONCIERGE_CHARMCRAFT_CHANNEL: ${{ inputs.charmcraft-channel }}
       run: |
         sudo snap install concierge --classic
@@ -59,5 +66,6 @@ runs:
         if [[ -n "${{ inputs.extra-debs }}" ]]; then
           extra_debs_flag="--extra-debs=${{ inputs.extra-debs }}"
         fi
-        sudo concierge prepare -p microk8s --extra-snaps=astral-uv $extra_debs_flag
+        sudo concierge prepare -p "${{ inputs.substrate }}" --extra-snaps=astral-uv $extra_debs_flag
         sudo snap install kubectl --classic
+        juju model-defaults automatically-retry-hooks="${{ inputs.automatically-retry-hooks }}"
