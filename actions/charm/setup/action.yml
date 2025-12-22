@@ -20,6 +20,9 @@ inputs:
   charmcraft-channel:
     description: Charmcraft snap channel
     default: "latest/stable"
+  extra-debs:
+    description: Additional apt packages to install (comma-separated)
+    default: ""
 
 runs:
   using: composite
@@ -52,5 +55,9 @@ runs:
         CONCIERGE_CHARMCRAFT_CHANNEL: ${{ inputs.charmcraft-channel }}
       run: |
         sudo snap install concierge --classic
-        sudo concierge prepare -p microk8s --extra-snaps=astral-uv
+        extra_debs_flag=""
+        if [[ -n "${{ inputs.extra-debs }}" ]]; then
+          extra_debs_flag="--extra-debs=${{ inputs.extra-debs }}"
+        fi
+        sudo concierge prepare -p microk8s --extra-snaps=astral-uv $extra_debs_flag
         sudo snap install kubectl --classic

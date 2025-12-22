@@ -65,8 +65,25 @@ runs:
         revision=$(echo "$upload_result" | jq -r '.revision')
         echo "Uploaded revision: $revision"
 
+        # Build resource flags for release command
+        resource_flags=""
+
+        # Check for OCI image resources in charmcraft.yaml
+        resources=$(yq -o=json '.resources // {}' charmcraft.yaml)
+        for resource_name in $(echo "$resources" | jq -r 'keys[]'); do
+          resource_type=$(echo "$resources" | jq -r --arg name "$resource_name" '.[$name].type')
+          if [[ "$resource_type" == "oci-image" ]]; then
+            upstream=$(echo "$resources" | jq -r --arg name "$resource_name" '.[$name]["upstream-source"]')
+            echo "Uploading OCI resource: $resource_name ($upstream)"
+            resource_result=$(charmcraft upload-resource "$charm_name" "$resource_name" --image="$upstream" --format=json)
+            resource_rev=$(echo "$resource_result" | jq -r '.revision')
+            echo "Uploaded resource revision: $resource_rev"
+            resource_flags="$resource_flags --resource=$resource_name:$resource_rev"
+          fi
+        done
+
         # Release to channel
-        charmcraft release "$charm_name" --revision="$revision" --channel="$CHANNEL"
+        charmcraft release "$charm_name" --revision="$revision" --channel="$CHANNEL" $resource_flags
         echo "Released to: $CHANNEL"
 
         echo "revision=$revision" >> "$GITHUB_OUTPUT"

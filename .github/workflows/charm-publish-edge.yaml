@@ -23,6 +23,10 @@ on:
         description: Skip actual publish (for testing)
         type: boolean
         default: false
+      extra-debs:
+        description: Additional apt packages for integration tests (comma-separated)
+        type: string
+        default: ""
     secrets:
       CHARMHUB_TOKEN:
         required: true
@@ -104,6 +108,7 @@ jobs:
       - uses: charmarr/.github/actions/charm/setup@v1
         with:
           juju: "true"
+          extra-debs: ${{ inputs.extra-debs }}
 
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}
