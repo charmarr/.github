@@ -60,4 +60,7 @@ runs:
           extra_debs_flag="--extra-debs=${{ inputs.extra-debs }}"
         fi
         sudo concierge prepare -p microk8s --extra-snaps=astral-uv $extra_debs_flag
+        if [[ "${{ inputs.extra-debs }}" == *"nfs-common"* ]]; then
+          sudo snap connect microk8s:nfs-support || true
+        fi
         sudo snap install kubectl --classic
