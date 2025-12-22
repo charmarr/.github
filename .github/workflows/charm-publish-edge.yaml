@@ -40,9 +40,21 @@ on:
         type: boolean
         default: true
       integration-runner:
-        description: Runner for integration tests (e.g., "ubuntu-latest" or self-hosted tag)
+        description: Default runner for integration tests
         type: string
         default: "ubuntu-latest"
+      self-hosted-runner:
+        description: Self-hosted runner label for specific suites
+        type: string
+        default: ""
+      self-hosted-suites:
+        description: JSON array of suite filenames to run on self-hosted runner
+        type: string
+        default: "[]"
+      concierge-restore:
+        description: Run concierge restore after integration tests
+        type: boolean
+        default: false
     secrets:
       CHARMHUB_TOKEN:
         required: true
@@ -103,7 +115,7 @@ jobs:
     name: Integration (${{ matrix.suite }})
     needs: [build, integration-matrix]
     if: inputs.run-integration && needs.integration-matrix.outputs.suites != '[]'
-    runs-on: ${{ inputs.integration-runner }}
+    runs-on: ${{ contains(fromJSON(inputs.self-hosted-suites), matrix.suite) && inputs.self-hosted-runner || inputs.integration-runner }}
     strategy:
       fail-fast: false
       matrix:
@@ -141,6 +153,10 @@ jobs:
           export CHARM_PATH
           CHARM_PATH="$(realpath "$charm_file")"
           uvx tox -e integration -- -k "${{ matrix.suite }}"
+
+      - name: Restore concierge
+        if: always() && inputs.concierge-restore && contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
+        run: sudo concierge restore
 
   publish:
     name: Publish to Edge
