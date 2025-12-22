@@ -75,7 +75,7 @@ runs:
           if [[ "$resource_type" == "oci-image" ]]; then
             upstream=$(echo "$resources" | jq -r --arg name "$resource_name" '.[$name]["upstream-source"]')
             echo "Uploading OCI resource: $resource_name ($upstream)"
-            resource_result=$(charmcraft upload-resource "$charm_name" "$resource_name" --image="$upstream" --format=json)
+            resource_result=$(charmcraft upload-resource "$charm_name" "$resource_name" --image="docker://$upstream" --format=json)
             resource_rev=$(echo "$resource_result" | jq -r '.revision')
             echo "Uploaded resource revision: $resource_rev"
             resource_flags="$resource_flags --resource=$resource_name:$resource_rev"
