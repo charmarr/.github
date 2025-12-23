@@ -59,6 +59,10 @@ on:
         description: Load NFS kernel modules before integration tests
         type: boolean
         default: false
+      setup-method:
+        description: Charm dev environment setup method (concierge or fire-flake)
+        type: string
+        default: "concierge"
     secrets:
       CHARMHUB_TOKEN:
         required: true
@@ -138,12 +142,25 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
           sudo docker image prune --all --force
 
-      - name: Clean stale juju state
-        if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
+      - name: Clean stale state (concierge)
+        if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite) && inputs.setup-method == 'concierge'
         continue-on-error: true
         run: |
           snap list concierge && sudo concierge restore || true
           rm -rf ~/.local/share/juju
+
+      - name: Clean stale state (fire-flake)
+        if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite) && inputs.setup-method == 'fire-flake'
+        continue-on-error: true
+        uses: extractions/setup-just@v3
+
+      - name: Run fire-flake nuke
+        if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite) && inputs.setup-method == 'fire-flake'
+        continue-on-error: true
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just -o /tmp/charm-dev.just
+          just -f /tmp/charm-dev.just charmdev-nuke
+          just -f /tmp/charm-dev.just charmdev-tools-nuke
 
       - name: Setup NFS prerequisites
         if: inputs.load-nfs-modules
@@ -154,7 +171,19 @@ jobs:
           sudo modprobe nfsv4
           sudo modprobe nfsd
 
+      - name: Setup via fire-flake
+        if: inputs.setup-method == 'fire-flake'
+        uses: extractions/setup-just@v3
+
+      - name: Run fire-flake setup
+        if: inputs.setup-method == 'fire-flake'
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just -o /tmp/charm-dev.just
+          just -f /tmp/charm-dev.just charmdev-tools-setup
+          just -f /tmp/charm-dev.just charmdev-setup
+
       - uses: charmarr/.github/actions/charm/setup@v1
+        if: inputs.setup-method == 'concierge'
         with:
           juju: "true"
           extra-debs: ${{ inputs.extra-debs }}
