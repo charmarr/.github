@@ -205,8 +205,14 @@ jobs:
           uvx tox -e integration -- -k "${{ matrix.suite }}"
 
       - name: Restore concierge
-        if: always() && inputs.concierge-restore && contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
+        if: always() && inputs.concierge-restore && inputs.setup-method == 'concierge' && contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
         run: sudo concierge restore
+
+      - name: Restore fire-flake
+        if: always() && inputs.concierge-restore && inputs.setup-method == 'fire-flake' && contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
+        run: |
+          just -f /tmp/charm-dev.just charmdev-nuke
+          just -f /tmp/charm-dev.just charmdev-tools-nuke
 
   publish:
     name: Publish to Edge
