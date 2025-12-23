@@ -153,12 +153,13 @@ jobs:
           substrate-channel: ${{ inputs.substrate-channel }}
           automatically-retry-hooks: ${{ inputs.automatically-retry-hooks }}
 
-      - name: Load NFS kernel modules
+      - name: Setup NFS support
         if: inputs.load-nfs-modules
         run: |
           sudo modprobe nfs
           sudo modprobe nfsv4
           sudo modprobe nfsd
+          sudo snap restart microk8s.daemon-kubelite
 
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}
