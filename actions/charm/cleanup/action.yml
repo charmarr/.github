@@ -1,0 +1,27 @@
+name: Cleanup Charm Environment
+description: Cleanup charm development environment on self-hosted runners
+
+inputs:
+  method:
+    description: Setup method used (concierge or fire-flake)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Restore concierge
+      if: inputs.method == 'concierge'
+      shell: bash
+      run: sudo concierge restore
+
+    - name: Setup just
+      if: inputs.method == 'fire-flake'
+      uses: extractions/setup-just@v3
+
+    - name: Restore fire-flake
+      if: inputs.method == 'fire-flake'
+      shell: bash
+      run: |
+        curl -fsSL "https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just?$(date +%s)" -o /tmp/charm-dev.just
+        just -f /tmp/charm-dev.just charmdev-microk8s-nuke
+        just -f /tmp/charm-dev.just charmdev-tools-nuke

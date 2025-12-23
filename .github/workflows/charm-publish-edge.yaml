@@ -51,8 +51,8 @@ on:
         description: JSON array of suite filenames to run on self-hosted runner
         type: string
         default: "[]"
-      concierge-restore:
-        description: Run concierge restore after integration tests
+      run-cleanup:
+        description: Run cleanup after integration tests
         type: boolean
         default: false
       load-nfs-modules:
@@ -142,25 +142,12 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
           sudo docker image prune --all --force
 
-      - name: Clean stale state (concierge)
-        if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite) && inputs.setup-method == 'concierge'
+      - name: Clean stale state
+        if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
         continue-on-error: true
-        run: |
-          snap list concierge && sudo concierge restore || true
-          rm -rf ~/.local/share/juju
-
-      - name: Clean stale state (fire-flake)
-        if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite) && inputs.setup-method == 'fire-flake'
-        continue-on-error: true
-        uses: extractions/setup-just@v3
-
-      - name: Run fire-flake nuke
-        if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite) && inputs.setup-method == 'fire-flake'
-        continue-on-error: true
-        run: |
-          curl -fsSL "https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just?$(date +%s)" -o /tmp/charm-dev.just
-          just -f /tmp/charm-dev.just charmdev-nuke
-          just -f /tmp/charm-dev.just charmdev-tools-nuke
+        uses: charmarr/.github/actions/charm/cleanup@v1
+        with:
+          method: ${{ inputs.setup-method }}
 
       - name: Setup NFS prerequisites
         if: inputs.load-nfs-modules
@@ -171,20 +158,9 @@ jobs:
           sudo modprobe nfsv4
           sudo modprobe nfsd
 
-      - name: Setup via fire-flake
-        if: inputs.setup-method == 'fire-flake'
-        uses: extractions/setup-just@v3
-
-      - name: Run fire-flake setup
-        if: inputs.setup-method == 'fire-flake'
-        run: |
-          curl -fsSL "https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just?$(date +%s)" -o /tmp/charm-dev.just
-          just -f /tmp/charm-dev.just charmdev-tools-setup
-          just -f /tmp/charm-dev.just charmdev-setup
-
       - uses: charmarr/.github/actions/charm/setup@v1
-        if: inputs.setup-method == 'concierge'
         with:
+          method: ${{ inputs.setup-method }}
           juju: "true"
           extra-debs: ${{ inputs.extra-debs }}
           substrate: ${{ inputs.substrate }}
@@ -203,16 +179,6 @@ jobs:
           export CHARM_PATH
           CHARM_PATH="$(realpath "$charm_file")"
           uvx tox -e integration -- -k "${{ matrix.suite }}"
-
-      - name: Restore concierge
-        if: always() && inputs.concierge-restore && inputs.setup-method == 'concierge' && contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
-        run: sudo concierge restore
-
-      - name: Restore fire-flake
-        if: always() && inputs.concierge-restore && inputs.setup-method == 'fire-flake' && contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
-        run: |
-          just -f /tmp/charm-dev.just charmdev-nuke
-          just -f /tmp/charm-dev.just charmdev-tools-nuke
 
   publish:
     name: Publish to Edge
@@ -253,3 +219,13 @@ jobs:
         with:
           charm-path: ${{ inputs.charm-path }}
           dry-run: ${{ inputs.dry-run }}
+
+  cleanup:
+    name: Cleanup Self-Hosted Runner
+    needs: [integration, publish, tag-terraform]
+    if: always() && inputs.run-cleanup
+    runs-on: ${{ inputs.self-hosted-runner }}
+    steps:
+      - uses: charmarr/.github/actions/charm/cleanup@v1
+        with:
+          method: ${{ inputs.setup-method }}
