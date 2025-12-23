@@ -145,6 +145,15 @@ jobs:
           snap list concierge && sudo concierge restore || true
           rm -rf ~/.local/share/juju
 
+      - name: Setup NFS prerequisites
+        if: inputs.load-nfs-modules
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nfs-common
+          sudo modprobe nfs
+          sudo modprobe nfsv4
+          sudo modprobe nfsd
+
       - uses: charmarr/.github/actions/charm/setup@v1
         with:
           juju: "true"
@@ -152,14 +161,6 @@ jobs:
           substrate: ${{ inputs.substrate }}
           substrate-channel: ${{ inputs.substrate-channel }}
           automatically-retry-hooks: ${{ inputs.automatically-retry-hooks }}
-
-      - name: Setup NFS support
-        if: inputs.load-nfs-modules
-        run: |
-          sudo modprobe nfs
-          sudo modprobe nfsv4
-          sudo modprobe nfsd
-          sudo snap restart microk8s.daemon-kubelite
 
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}
