@@ -2,9 +2,6 @@ name: Setup Charm Environment
 description: Install tools for charm development and CI
 
 inputs:
-  method:
-    description: Setup method (concierge or fire-flake)
-    default: "concierge"
   charmcraft:
     description: Install charmcraft
     default: "true"
@@ -32,6 +29,9 @@ inputs:
   automatically-retry-hooks:
     description: Whether Juju should automatically retry failed hooks
     default: "true"
+  classic-microk8s:
+    description: Reinstall MicroK8s with --classic flag (required for NFS)
+    default: "false"
 
 runs:
   using: composite
@@ -47,7 +47,7 @@ runs:
       run: sudo snap install yq
 
     - name: Install charmcraft
-      if: inputs.charmcraft == 'true' && inputs.method == 'concierge'
+      if: inputs.charmcraft == 'true'
       shell: bash
       run: sudo snap install charmcraft --classic --channel="${{ inputs.charmcraft-channel }}"
 
@@ -56,7 +56,7 @@ runs:
       uses: canonical/setup-lxd@main
 
     - name: Setup Juju and K8s substrate via concierge
-      if: inputs.juju == 'true' && inputs.method == 'concierge'
+      if: inputs.juju == 'true'
       shell: bash
       env:
         CONCIERGE_JUJU_CHANNEL: ${{ inputs.juju-channel }}
@@ -73,17 +73,21 @@ runs:
         sudo snap install kubectl --classic
         juju model-defaults automatically-retry-hooks="${{ inputs.automatically-retry-hooks }}"
 
-    - name: Setup just
-      if: inputs.juju == 'true' && inputs.method == 'fire-flake'
-      uses: extractions/setup-just@v3
-
-    - name: Setup Juju and K8s substrate via fire-flake
-      if: inputs.juju == 'true' && inputs.method == 'fire-flake'
+    - name: Reinstall MicroK8s with classic confinement
+      if: inputs.juju == 'true' && inputs.classic-microk8s == 'true' && inputs.substrate == 'microk8s'
       shell: bash
       run: |
-        curl -fsSL "https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just?$(date +%s)" -o /tmp/charm-dev.just
-        just -f /tmp/charm-dev.just charmdev-tools-setup
-        just -f /tmp/charm-dev.just charmdev-microk8s-install
-        just -f /tmp/charm-dev.just charmdev-microk8s-setup
-        just -f /tmp/charm-dev.just charmdev-microk8s-juju-bootstrap
-        just -f /tmp/charm-dev.just charmdev-microk8s-export-kubeconfig
+        # Destroy existing juju controller
+        juju destroy-controller microk8s --destroy-all-models --destroy-storage --no-prompt || true
+        # Remove strict microk8s
+        sudo snap remove microk8s --purge
+        # Install classic microk8s
+        sudo snap install microk8s --channel="${{ inputs.substrate-channel }}" --classic
+        # Wait for microk8s to be ready
+        sudo microk8s status --wait-ready
+        # Enable required addons
+        sudo microk8s enable dns hostpath-storage metallb:10.64.140.43-10.64.140.49
+        # Add microk8s to juju and bootstrap
+        sudo microk8s config | juju add-k8s mcrk8s --client
+        juju bootstrap mcrk8s mcrk8s
+        juju add-model --config logging-config="<root>=WARNING; unit=DEBUG" --config update-status-hook-interval="60m" testing

@@ -59,10 +59,10 @@ on:
         description: Load NFS kernel modules before integration tests
         type: boolean
         default: false
-      setup-method:
-        description: Charm dev environment setup method (concierge or fire-flake)
-        type: string
-        default: "concierge"
+      classic-microk8s:
+        description: Reinstall MicroK8s with --classic flag (required for NFS)
+        type: boolean
+        default: false
     secrets:
       CHARMHUB_TOKEN:
         required: true
@@ -146,8 +146,6 @@ jobs:
         if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
         continue-on-error: true
         uses: charmarr/.github/actions/charm/cleanup@v1
-        with:
-          method: ${{ inputs.setup-method }}
 
       - name: Setup NFS prerequisites
         if: inputs.load-nfs-modules
@@ -160,12 +158,12 @@ jobs:
 
       - uses: charmarr/.github/actions/charm/setup@v1
         with:
-          method: ${{ inputs.setup-method }}
           juju: "true"
           extra-debs: ${{ inputs.extra-debs }}
           substrate: ${{ inputs.substrate }}
           substrate-channel: ${{ inputs.substrate-channel }}
           automatically-retry-hooks: ${{ inputs.automatically-retry-hooks }}
+          classic-microk8s: ${{ inputs.classic-microk8s }}
 
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}
@@ -227,5 +225,3 @@ jobs:
     runs-on: ${{ inputs.self-hosted-runner }}
     steps:
       - uses: charmarr/.github/actions/charm/cleanup@v1
-        with:
-          method: ${{ inputs.setup-method }}
