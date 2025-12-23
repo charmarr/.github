@@ -55,6 +55,10 @@ on:
         description: Run concierge restore after integration tests
         type: boolean
         default: false
+      load-nfs-modules:
+        description: Load NFS kernel modules before integration tests
+        type: boolean
+        default: false
     secrets:
       CHARMHUB_TOKEN:
         required: true
@@ -148,6 +152,13 @@ jobs:
           substrate: ${{ inputs.substrate }}
           substrate-channel: ${{ inputs.substrate-channel }}
           automatically-retry-hooks: ${{ inputs.automatically-retry-hooks }}
+
+      - name: Load NFS kernel modules
+        if: inputs.load-nfs-modules
+        run: |
+          sudo modprobe nfs
+          sudo modprobe nfsv4
+          sudo modprobe nfsd
 
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}
