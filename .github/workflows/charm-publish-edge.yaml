@@ -158,7 +158,7 @@ jobs:
         if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite) && inputs.setup-method == 'fire-flake'
         continue-on-error: true
         run: |
-          curl -fsSL https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just -o /tmp/charm-dev.just
+          curl -fsSL "https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just?$(date +%s)" -o /tmp/charm-dev.just
           just -f /tmp/charm-dev.just charmdev-nuke
           just -f /tmp/charm-dev.just charmdev-tools-nuke
 
@@ -178,7 +178,7 @@ jobs:
       - name: Run fire-flake setup
         if: inputs.setup-method == 'fire-flake'
         run: |
-          curl -fsSL https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just -o /tmp/charm-dev.just
+          curl -fsSL "https://raw.githubusercontent.com/adhityaravi/fire-flake/main/fire-flake/justfiles/charm-dev.just?$(date +%s)" -o /tmp/charm-dev.just
           just -f /tmp/charm-dev.just charmdev-tools-setup
           just -f /tmp/charm-dev.just charmdev-setup
 
