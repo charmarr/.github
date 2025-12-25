@@ -66,6 +66,8 @@ on:
     secrets:
       CHARMHUB_TOKEN:
         required: true
+      WIREGUARD_PRIVATE_KEY:
+        required: false
 
 concurrency:
   group: publish-${{ github.ref }}-${{ inputs.charm-path }}
@@ -167,6 +169,8 @@ jobs:
 
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}
+        env:
+          WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
         run: |
           set -euo pipefail
           charm_file="$(find . -maxdepth 1 -name '*.charm' -print -quit)"
