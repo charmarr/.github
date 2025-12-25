@@ -24,7 +24,7 @@ runs:
   using: composite
   steps:
     - name: Download charm artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: ${{ inputs.artifact-name }}
         path: ${{ inputs.charm-path }}

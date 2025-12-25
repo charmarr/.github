@@ -18,7 +18,7 @@ runs:
   using: composite
   steps:
     - name: Cache charmcraft wheels
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: /home/runner/snap/charmcraft/common/cache/charmcraft
         key: charmcraft-wheels-${{ hashFiles(format('{0}/uv.lock', inputs.charm-path)) }}
@@ -40,7 +40,7 @@ runs:
         echo "charm-file=$(realpath "$charm_file")" >> "$GITHUB_OUTPUT"
 
     - name: Upload charm artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ inputs.artifact-name }}
         path: ${{ inputs.charm-path }}/*.charm
