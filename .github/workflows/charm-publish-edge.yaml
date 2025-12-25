@@ -80,7 +80,7 @@ jobs:
     outputs:
       artifact-name: ${{ steps.artifact-name.outputs.name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: charmarr/.github/actions/charm/setup@v1
         with:
@@ -108,7 +108,7 @@ jobs:
     outputs:
       suites: ${{ steps.suites.outputs.suites }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Generate matrix
         id: suites
@@ -131,9 +131,9 @@ jobs:
       matrix:
         suite: ${{ fromJSON(needs.integration-matrix.outputs.suites) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: ${{ needs.build.outputs.artifact-name }}
           path: ${{ inputs.charm-path }}
@@ -188,7 +188,7 @@ jobs:
     if: always() && needs.build.result == 'success' && (needs.integration.result == 'success' || needs.integration.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: charmarr/.github/actions/charm/setup@v1
 
@@ -209,7 +209,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
