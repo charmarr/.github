@@ -71,7 +71,7 @@ Contributions welcome! Alpha project - expect breaking changes.
 - **Tools**: GPL-3.0
 - **Docs**: CC-BY-SA-4.0
 
-Use it, fork it, keep it open. 🌸
+Use it, fork it, dont be a dick and keep it open. 🌸
 
 ---
 
