@@ -47,9 +47,9 @@ Charmarr is a media server management system. It provides charmed versions of AR
 🟢 `sabnzbd-k8s` charm<br>
 🟢 `prowlarr-k8s` charm<br>
 🟢 `flaresolverr-k8s` charm<br>
-🟠 `radarr-k8s` charm<br>
-🟠 `sonarr-k8s` charm<br>
-⚪ `plex-k8s` charm<br>
+🟢 `radarr-k8s` charm<br>
+🟢 `sonarr-k8s` charm<br>
+🟠 `plex-k8s` charm<br>
 ⚪ `overseer-k8s` charm<br>
 ⚪ `tailscale-connector-k8s` charm<br>
 
