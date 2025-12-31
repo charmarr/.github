@@ -35,6 +35,8 @@ Charmarr is a media server management system. It provides charmed versions of AR
 
 ## Roadmap
 
+### Track 1
+
 🟢 Organization, repos, logos<br>
 🟢 Charm template<br>
 🟢 Community guidelines & licenses<br>
@@ -56,8 +58,9 @@ Charmarr is a media server management system. It provides charmed versions of AR
 ⚪ Solution level periodic itests<br>
 ⚪ `tailscale-connector-k8s` charm<br>
 ⚪ Charmhub track guardrails and track updates<br>
-⚪ Documentation of Charmarr v1<br>
-⚪ Charmarr 1/stable release<br>
+⚪ Threat modelling for track v1<br>
+⚪ Documentation for track 1<br>
+⚪ Charmarr track 1/stable release<br>
 
 ---
 
