@@ -50,7 +50,7 @@ Charmarr is a media server management system. It provides charmed versions of AR
 🟢 `radarr-k8s` charm<br>
 🟢 `sonarr-k8s` charm<br>
 🟢 `plex-k8s` charm<br>
-🟠 `overseer-k8s` charm<br>
+🟢 `overseer-k8s` charm<br>
 ⚪ `tailscale-connector-k8s` charm<br>
 
 ---
