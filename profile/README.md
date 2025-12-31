@@ -50,8 +50,14 @@ Charmarr is a media server management system. It provides charmed versions of AR
 🟢 `radarr-k8s` charm<br>
 🟢 `sonarr-k8s` charm<br>
 🟢 `plex-k8s` charm<br>
-🟢 `overseer-k8s` charm<br>
+🟢 `overseer-k8s` charm<br>'
+⚪ Validate and version terraform modules<br>
+⚪ Charmarr product level terraform module<br>
+⚪ Solution level periodic itests<br>
 ⚪ `tailscale-connector-k8s` charm<br>
+⚪ Charmhub track guardrails and track updates<br>
+⚪ Documentation of Charmarr v1<br>
+⚪ Charmarr 1/stable release<br>
 
 ---
 
