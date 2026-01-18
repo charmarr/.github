@@ -1,4 +1,4 @@
-name: Publish Charm to Edge
+name: Publish Charm
 
 on:
   workflow_call:
@@ -7,10 +7,10 @@ on:
         description: Path to charm directory (use "." for standalone repos)
         type: string
         default: "."
-      track:
-        description: Charmhub track (e.g., "latest", "1", "2")
+      channel:
+        description: Charmhub channel (e.g., "latest/edge", "1/stable")
         type: string
-        default: "latest"
+        required: true
       run-integration:
         description: Run integration tests before publishing
         type: boolean
@@ -183,7 +183,7 @@ jobs:
           uvx tox -e integration -- -k "${{ matrix.suite }}"
 
   publish:
-    name: Publish to Edge
+    name: Publish
     needs: [build, integration-matrix, integration]
     if: always() && needs.build.result == 'success' && (needs.integration.result == 'success' || needs.integration.result == 'skipped')
     runs-on: ubuntu-latest
@@ -195,7 +195,7 @@ jobs:
       - uses: charmarr/.github/actions/charm/publish@v1
         with:
           charm-path: ${{ inputs.charm-path }}
-          channel: ${{ inputs.track }}/edge
+          channel: ${{ inputs.channel }}
           artifact-name: ${{ needs.build.outputs.artifact-name }}
           dry-run: ${{ inputs.dry-run }}
         env:
