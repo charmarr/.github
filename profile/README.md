@@ -29,8 +29,6 @@ Charmarr is a media server management system. It provides charmed versions of AR
 - Thin wrappers that handle K8s complexity (networking, storage, ingress)
 - Modular opt-in features because of existing mature charms (observability, service mesh, secrets management)
 
----
-
 ## Roadmap
 
 ### Track 1
@@ -62,8 +60,6 @@ Charmarr is a media server management system. It provides charmed versions of AR
 ⚪ Charmarr track 1/stable release<br>
 ⚪ Charmarr blog<br>
 ⚪ `tailscale-connector-k8s` charm<br>
-
----
 
 ## Contributing
 
