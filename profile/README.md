@@ -67,12 +67,6 @@ Charmarr is a media server management system. It provides charmed versions of AR
 
 ---
 
-## Is This Overkill?
-
-**Yes.** If you want something simpler, check out [yams](https://yams.media/).
-
----
-
 ## Contributing
 
 Contributions welcome! Alpha project - expect breaking changes.
