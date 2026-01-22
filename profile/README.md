@@ -63,7 +63,7 @@ Charmarr is a media server management system. It provides charmed versions of AR
 
 ## Contributing
 
-Contributions welcome! Alpha project - expect breaking changes.
+Contributions welcome! Look at the [charmarr](https://github.com/charmarr/charmarr) repo for guidelines.
 
 ## License
 
