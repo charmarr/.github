@@ -54,17 +54,16 @@ Charmarr is a media server management system. It provides charmed versions of AR
 🟢 `plex-k8s` charm<br>
 🟢 `overseer-k8s` charm<br>
 🟢 Charmhub track guardrails<br>
-⚪ `tailscale-connector-k8s` charm<br>
-⚪ Dogfooding phase in ikiikiinu<br>
-⚪ Gluetun and Storage charm blogs<br>
-⚪ Track updates to 1/edge<br>
-⚪ Validate and version terraform modules<br>
-⚪ Charmarr product level terraform module<br>
+🟢 Validate and version terraform modules<br>
+🟢 Charmarr product level terraform module<br>
+🟠 Dogfooding phase in ikiikiinu<br>
+🟠 Documentation<br>
 ⚪ Solution level periodic itests<br>
+⚪ Gluetun and Storage charm blogs<br>
 ⚪ Threat modelling for track v1<br>
-⚪ Documentation for track 1<br>
 ⚪ Charmarr track 1/stable release<br>
 ⚪ Charmarr blog<br>
+⚪ `tailscale-connector-k8s` charm<br>
 
 ---
 
