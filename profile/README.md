@@ -10,8 +10,6 @@
   <img src="https://img.shields.io/badge/media-automation-purple?logo=vlcmediaplayer" alt="Media Automation">
 </p>
 
----
-
 A collection of charmed ARR services for self-hosted media server setups that run on Kubernetes substrate.
 
 ## What is Charmarr?
