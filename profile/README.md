@@ -53,13 +53,11 @@ Charmarr is a media server management system. It provides charmed versions of AR
 🟢 Validate and version terraform modules<br>
 🟢 Charmarr product level terraform module<br>
 🟠 Dogfooding phase in ikiikiinu<br>
-🟠 Documentation<br>
+🟢 Documentation<br>
 ⚪ Solution level periodic itests<br>
 ⚪ Fix repo automations - issue templates, update guidelines etc<br>
-⚪ Gluetun and Storage charm blogs<br>
 ⚪ Threat modelling for track v1<br>
 ⚪ Charmarr track 1/stable release<br>
-⚪ Charmarr blog<br>
 ⚪ `tailscale-connector-k8s` charm<br>
 
 ## Contributing
