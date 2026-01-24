@@ -55,7 +55,7 @@ Charmarr is a media server management system. It provides charmed versions of AR
 🟠 Dogfooding phase in ikiikiinu<br>
 🟢 Documentation<br>
 🟢 Fix repo automations - issue templates, update guidelines etc<br>
-⚪ Solution level periodic itests<br>
+🟢 Solution level periodic itests<br>
 ⚪ Threat modelling for track v1<br>
 ⚪ Charmarr track 1/stable release<br>
 ⚪ `tailscale-connector-k8s` charm<br>
