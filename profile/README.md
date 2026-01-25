@@ -31,34 +31,33 @@ Charmarr is a media server management system. It provides charmed versions of AR
 
 ## Roadmap
 
-### Track 1
-
-🟢 Organization, repos, logos<br>
-🟢 Charm template<br>
-🟢 Community guidelines & licenses<br>
-🟢 Architecture Decision Records<br>
-🟢 VXLAN design validation<br>
-🟢 Shared charm libraries<br>
-🟢 `charmarr-storage-k8s` charm<br>
-🟢 `gluetun-k8s` charm<br>
-🟢 `qbittorrent-k8s` charm<br>
-🟢 `sabnzbd-k8s` charm<br>
-🟢 `prowlarr-k8s` charm<br>
-🟢 `flaresolverr-k8s` charm<br>
-🟢 `radarr-k8s` charm<br>
-🟢 `sonarr-k8s` charm<br>
-🟢 `plex-k8s` charm<br>
-🟢 `overseer-k8s` charm<br>
-🟢 Charmhub track guardrails<br>
-🟢 Validate and version terraform modules<br>
-🟢 Charmarr product level terraform module<br>
-🟠 Dogfooding phase in ikiikiinu<br>
-🟢 Documentation<br>
-🟢 Fix repo automations - issue templates, update guidelines etc<br>
-🟢 Solution level periodic itests<br>
-⚪ Threat modelling for track v1<br>
-⚪ Charmarr track 1/stable release<br>
-⚪ `tailscale-connector-k8s` charm<br>
+| Track 1 | Track 2 |
+|---------|---------|
+| 🟢 Organization, repos, logos | ⚪ `tailscale-connector-k8s` charm |
+| 🟢 Charm template | |
+| 🟢 Community guidelines & licenses | |
+| 🟢 Architecture Decision Records | |
+| 🟢 VXLAN design validation | |
+| 🟢 Shared charm libraries | |
+| 🟢 `charmarr-storage-k8s` charm | |
+| 🟢 `gluetun-k8s` charm | |
+| 🟢 `qbittorrent-k8s` charm | |
+| 🟢 `sabnzbd-k8s` charm | |
+| 🟢 `prowlarr-k8s` charm | |
+| 🟢 `flaresolverr-k8s` charm | |
+| 🟢 `radarr-k8s` charm | |
+| 🟢 `sonarr-k8s` charm | |
+| 🟢 `plex-k8s` charm | |
+| 🟢 `overseer-k8s` charm | |
+| 🟢 Charmhub track guardrails | |
+| 🟢 Validate and version terraform modules | |
+| 🟢 Charmarr product level terraform module | |
+| 🟠 Dogfooding phase | |
+| 🟢 Documentation | |
+| 🟢 Solution level periodic itests | |
+| 🟢 Fix repo automations | |
+| ⚪ Threat modelling for track v1 | |
+| ⚪ Charmarr track 1/stable release | |
 
 ## Contributing
 
