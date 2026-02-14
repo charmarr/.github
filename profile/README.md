@@ -34,8 +34,8 @@ Charmarr is a media server management system. It provides charmed versions of AR
 | Track 1 | Track 2 |
 |---------|---------|
 | 🟢 Organization, repos, logos | ⚪ `tailscale-connector-k8s` charm |
-| 🟢 Charm template | |
-| 🟢 Community guidelines & licenses | |
+| 🟢 Charm template | ⚪ Observability integration with `COS` |
+| 🟢 Community guidelines & licenses | ⚪ Postgres support for ARRs to enable HA |
 | 🟢 Architecture Decision Records | |
 | 🟢 VXLAN design validation | |
 | 🟢 Shared charm libraries | |
@@ -52,11 +52,11 @@ Charmarr is a media server management system. It provides charmed versions of AR
 | 🟢 Charmhub track guardrails | |
 | 🟢 Validate and version terraform modules | |
 | 🟢 Charmarr product level terraform module | |
-| 🟠 Dogfooding phase | |
+| 🟢 Dogfooding phase - ~99.9% uptime over 2 months | |
 | 🟢 Documentation | |
 | 🟢 Solution level periodic itests | |
 | 🟢 Fix repo automations | |
-| ⚪ Threat modelling for track v1 | |
+| 🟠 Threat modelling for track v1 | |
 | ⚪ Charmarr track 1/stable release | |
 
 ## Contributing
