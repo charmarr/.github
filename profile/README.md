@@ -34,7 +34,7 @@ Charmarr is a media server management system. It provides charmed versions of AR
 | Track 1 | Track 2 |
 |---------|---------|
 | 🟢 Organization, repos, logos | ⚪ `tailscale-connector-k8s` charm |
-| 🟢 Charm template | ⚪ Observability integration with `COS` |
+| 🟢 Charm template | ⚪ Observability integration with [`COS`](https://documentation.ubuntu.com/observability/track-2/) |
 | 🟢 Community guidelines & licenses | ⚪ Postgres support for ARRs to enable HA |
 | 🟢 Architecture Decision Records | |
 | 🟢 VXLAN design validation | |
