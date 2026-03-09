@@ -58,6 +58,10 @@ on:
         required: false
       LOGFIRE_TOKEN:
         required: false
+      CHARMARR_PARROT_APP_ID:
+        required: false
+      CHARMARR_PARROT_APP_PRIVATE_KEY:
+        required: false
     outputs:
       artifact-name:
         description: Name of the built charm artifact
@@ -167,6 +171,14 @@ jobs:
           automatically-retry-hooks: ${{ inputs.automatically-retry-hooks }}
           classic-microk8s: ${{ contains(fromJSON(inputs.classic-microk8s-suites), matrix.suite) }}
 
+      - name: Generate parrot token
+        if: inputs.use-parrot
+        id: parrot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
+          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
+
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}
         run: |
@@ -190,6 +202,7 @@ jobs:
           WIREGUARD_PRIVATE_KEY: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
+          GH_TOKEN: ${{ steps.parrot-token.outputs.token }}
 
   cleanup:
     name: Cleanup Self-Hosted Runner

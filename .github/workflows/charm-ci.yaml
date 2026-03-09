@@ -32,6 +32,10 @@ on:
         required: false
       LOGFIRE_TOKEN:
         required: false
+      CHARMARR_PARROT_APP_ID:
+        required: false
+      CHARMARR_PARROT_APP_PRIVATE_KEY:
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.charm-path }}
@@ -59,6 +63,14 @@ jobs:
 
       - uses: charmarr/.github/actions/charm/setup@v2
 
+      - name: Generate parrot token
+        if: inputs.use-parrot
+        id: parrot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
+          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
+
       - name: Run lint
         working-directory: ${{ inputs.charm-path }}
         run: |
@@ -72,6 +84,7 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
+          GH_TOKEN: ${{ steps.parrot-token.outputs.token }}
 
   static:
     name: Static Analysis
@@ -94,6 +107,14 @@ jobs:
 
       - uses: charmarr/.github/actions/charm/setup@v2
 
+      - name: Generate parrot token
+        if: inputs.use-parrot
+        id: parrot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
+          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
+
       - name: Run static checks
         working-directory: ${{ inputs.charm-path }}
         run: |
@@ -107,6 +128,7 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
+          GH_TOKEN: ${{ steps.parrot-token.outputs.token }}
 
   unit:
     name: Unit Tests
@@ -129,6 +151,14 @@ jobs:
 
       - uses: charmarr/.github/actions/charm/setup@v2
 
+      - name: Generate parrot token
+        if: inputs.use-parrot
+        id: parrot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
+          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
+
       - name: Run unit tests
         working-directory: ${{ inputs.charm-path }}
         run: |
@@ -142,6 +172,7 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
+          GH_TOKEN: ${{ steps.parrot-token.outputs.token }}
 
   terraform-validate:
     name: Validate Terraform
