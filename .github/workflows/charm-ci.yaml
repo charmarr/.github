@@ -23,6 +23,15 @@ on:
         description: Validate Terraform files
         type: boolean
         default: true
+      use-parrot:
+        description: Wrap test execution with parrot auto-healing
+        type: boolean
+        default: false
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN:
+        required: false
+      LOGFIRE_TOKEN:
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.charm-path }}
@@ -36,11 +45,33 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/checkout@v6
+        if: inputs.use-parrot
+        with:
+          repository: charmarr/parrot
+          path: parrot
+
+      - uses: actions/checkout@v6
+        if: inputs.use-parrot
+        with:
+          repository: charmarr/charmarr-lib
+          path: charmarr-lib
+
       - uses: charmarr/.github/actions/charm/setup@v1
 
       - name: Run lint
         working-directory: ${{ inputs.charm-path }}
-        run: uvx tox -e lint
+        run: |
+          if [[ "${{ inputs.use-parrot }}" == "true" ]]; then
+            uv run --project "${{ github.workspace }}/parrot" python -m parrot lint \
+              --charm-path "$(pwd)" \
+              --extra-index "${{ github.workspace }}/charmarr-lib"
+          else
+            uvx tox -e lint
+          fi
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
 
   static:
     name: Static Analysis
@@ -49,11 +80,33 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/checkout@v6
+        if: inputs.use-parrot
+        with:
+          repository: charmarr/parrot
+          path: parrot
+
+      - uses: actions/checkout@v6
+        if: inputs.use-parrot
+        with:
+          repository: charmarr/charmarr-lib
+          path: charmarr-lib
+
       - uses: charmarr/.github/actions/charm/setup@v1
 
       - name: Run static checks
         working-directory: ${{ inputs.charm-path }}
-        run: uvx tox -e static
+        run: |
+          if [[ "${{ inputs.use-parrot }}" == "true" ]]; then
+            uv run --project "${{ github.workspace }}/parrot" python -m parrot static \
+              --charm-path "$(pwd)" \
+              --extra-index "${{ github.workspace }}/charmarr-lib"
+          else
+            uvx tox -e static
+          fi
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
 
   unit:
     name: Unit Tests
@@ -62,11 +115,33 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/checkout@v6
+        if: inputs.use-parrot
+        with:
+          repository: charmarr/parrot
+          path: parrot
+
+      - uses: actions/checkout@v6
+        if: inputs.use-parrot
+        with:
+          repository: charmarr/charmarr-lib
+          path: charmarr-lib
+
       - uses: charmarr/.github/actions/charm/setup@v1
 
       - name: Run unit tests
         working-directory: ${{ inputs.charm-path }}
-        run: uvx tox -e unit
+        run: |
+          if [[ "${{ inputs.use-parrot }}" == "true" ]]; then
+            uv run --project "${{ github.workspace }}/parrot" python -m parrot unit \
+              --charm-path "$(pwd)" \
+              --extra-index "${{ github.workspace }}/charmarr-lib"
+          else
+            uvx tox -e unit
+          fi
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
 
   terraform-validate:
     name: Validate Terraform
