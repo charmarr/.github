@@ -87,6 +87,7 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
           GH_TOKEN: ${{ steps.parrot-token.outputs.token }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
 
   static:
     name: Static Analysis
@@ -133,6 +134,7 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
           GH_TOKEN: ${{ steps.parrot-token.outputs.token }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
 
   unit:
     name: Unit Tests
@@ -179,6 +181,7 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
           GH_TOKEN: ${{ steps.parrot-token.outputs.token }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
 
   terraform-validate:
     name: Validate Terraform
