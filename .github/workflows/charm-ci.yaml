@@ -57,7 +57,7 @@ jobs:
           repository: charmarr/charmarr-lib
           path: charmarr-lib
 
-      - uses: charmarr/.github/actions/charm/setup@v1
+      - uses: charmarr/.github/actions/charm/setup@v2
 
       - name: Run lint
         working-directory: ${{ inputs.charm-path }}
@@ -92,7 +92,7 @@ jobs:
           repository: charmarr/charmarr-lib
           path: charmarr-lib
 
-      - uses: charmarr/.github/actions/charm/setup@v1
+      - uses: charmarr/.github/actions/charm/setup@v2
 
       - name: Run static checks
         working-directory: ${{ inputs.charm-path }}
@@ -127,7 +127,7 @@ jobs:
           repository: charmarr/charmarr-lib
           path: charmarr-lib
 
-      - uses: charmarr/.github/actions/charm/setup@v1
+      - uses: charmarr/.github/actions/charm/setup@v2
 
       - name: Run unit tests
         working-directory: ${{ inputs.charm-path }}

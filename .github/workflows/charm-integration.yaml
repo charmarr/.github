@@ -72,7 +72,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: charmarr/.github/actions/charm/setup@v1
+      - uses: charmarr/.github/actions/charm/setup@v2
         with:
           lxd: "true"
 
@@ -85,7 +85,7 @@ jobs:
             echo "name=charm-$(echo '${{ inputs.charm-path }}' | tr '/' '-')" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: charmarr/.github/actions/charm/build@v1
+      - uses: charmarr/.github/actions/charm/build@v2
         with:
           charm-path: ${{ inputs.charm-path }}
           artifact-name: ${{ steps.artifact-name.outputs.name }}
@@ -147,7 +147,7 @@ jobs:
       - name: Clean stale state
         if: contains(fromJSON(inputs.self-hosted-suites), matrix.suite)
         continue-on-error: true
-        uses: charmarr/.github/actions/charm/cleanup@v1
+        uses: charmarr/.github/actions/charm/cleanup@v2
 
       - name: Setup NFS prerequisites
         if: inputs.load-nfs-modules
@@ -158,7 +158,7 @@ jobs:
           sudo modprobe nfsv4
           sudo modprobe nfsd
 
-      - uses: charmarr/.github/actions/charm/setup@v1
+      - uses: charmarr/.github/actions/charm/setup@v2
         with:
           juju: "true"
           extra-debs: ${{ inputs.extra-debs }}
@@ -197,4 +197,4 @@ jobs:
     if: always() && inputs.run-cleanup
     runs-on: ${{ inputs.self-hosted-runner }}
     steps:
-      - uses: charmarr/.github/actions/charm/cleanup@v1
+      - uses: charmarr/.github/actions/charm/cleanup@v2
