@@ -123,7 +123,17 @@ jobs:
       matrix:
         suite: ${{ fromJSON(needs.matrix.outputs.suites) }}
     steps:
+      - name: Generate parrot token
+        if: inputs.use-parrot
+        id: parrot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
+          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v6
+        with:
+          token: ${{ steps.parrot-token.outputs.token || github.token }}
 
       - uses: actions/checkout@v6
         if: inputs.use-parrot || runner.debug == '1'
@@ -170,14 +180,6 @@ jobs:
           substrate-channel: ${{ inputs.substrate-channel }}
           automatically-retry-hooks: ${{ inputs.automatically-retry-hooks }}
           classic-microk8s: ${{ contains(fromJSON(inputs.classic-microk8s-suites), matrix.suite) }}
-
-      - name: Generate parrot token
-        if: inputs.use-parrot
-        id: parrot-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
-          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
 
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}

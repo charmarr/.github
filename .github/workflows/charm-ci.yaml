@@ -47,7 +47,17 @@ jobs:
     if: inputs.run-lint
     runs-on: ubuntu-latest
     steps:
+      - name: Generate parrot token
+        if: inputs.use-parrot
+        id: parrot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
+          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v6
+        with:
+          token: ${{ steps.parrot-token.outputs.token || github.token }}
 
       - uses: actions/checkout@v6
         if: inputs.use-parrot
@@ -62,14 +72,6 @@ jobs:
           path: charmarr-lib
 
       - uses: charmarr/.github/actions/charm/setup@v2
-
-      - name: Generate parrot token
-        if: inputs.use-parrot
-        id: parrot-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
-          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
 
       - name: Run lint
         working-directory: ${{ inputs.charm-path }}
@@ -91,7 +93,17 @@ jobs:
     if: inputs.run-static
     runs-on: ubuntu-latest
     steps:
+      - name: Generate parrot token
+        if: inputs.use-parrot
+        id: parrot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
+          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v6
+        with:
+          token: ${{ steps.parrot-token.outputs.token || github.token }}
 
       - uses: actions/checkout@v6
         if: inputs.use-parrot
@@ -106,14 +118,6 @@ jobs:
           path: charmarr-lib
 
       - uses: charmarr/.github/actions/charm/setup@v2
-
-      - name: Generate parrot token
-        if: inputs.use-parrot
-        id: parrot-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
-          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
 
       - name: Run static checks
         working-directory: ${{ inputs.charm-path }}
@@ -135,7 +139,17 @@ jobs:
     if: inputs.run-unit
     runs-on: ubuntu-latest
     steps:
+      - name: Generate parrot token
+        if: inputs.use-parrot
+        id: parrot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
+          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v6
+        with:
+          token: ${{ steps.parrot-token.outputs.token || github.token }}
 
       - uses: actions/checkout@v6
         if: inputs.use-parrot
@@ -150,14 +164,6 @@ jobs:
           path: charmarr-lib
 
       - uses: charmarr/.github/actions/charm/setup@v2
-
-      - name: Generate parrot token
-        if: inputs.use-parrot
-        id: parrot-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.CHARMARR_PARROT_APP_ID }}
-          private-key: ${{ secrets.CHARMARR_PARROT_APP_PRIVATE_KEY }}
 
       - name: Run unit tests
         working-directory: ${{ inputs.charm-path }}
