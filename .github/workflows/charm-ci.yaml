@@ -63,6 +63,7 @@ jobs:
         if: inputs.use-parrot
         with:
           repository: charmarr/parrot
+          ref: v1
           path: parrot
 
       - uses: actions/checkout@v6
@@ -110,6 +111,7 @@ jobs:
         if: inputs.use-parrot
         with:
           repository: charmarr/parrot
+          ref: v1
           path: parrot
 
       - uses: actions/checkout@v6
@@ -157,6 +159,7 @@ jobs:
         if: inputs.use-parrot
         with:
           repository: charmarr/parrot
+          ref: v1
           path: parrot
 
       - uses: actions/checkout@v6

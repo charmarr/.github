@@ -139,6 +139,7 @@ jobs:
         if: inputs.use-parrot || runner.debug == '1'
         with:
           repository: charmarr/parrot
+          ref: v1
           path: parrot
 
       - uses: actions/checkout@v6
