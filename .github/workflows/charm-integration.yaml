@@ -124,7 +124,7 @@ jobs:
         suite: ${{ fromJSON(needs.matrix.outputs.suites) }}
     steps:
       - name: Generate parrot token
-        if: inputs.use-parrot
+        if: inputs.use-parrot || runner.debug == '1'
         id: parrot-token
         uses: actions/create-github-app-token@v2
         with:
