@@ -33,7 +33,7 @@ Charmarr is a media server management system. It provides charmed versions of AR
 
 | Track 1 | Track 2 |
 |---------|---------|
-| 🟢 Organization, repos, logos | ⚪ `seerr-k8s` charm |
+| 🟢 Organization, repos, logos | 🟠 `seerr-k8s` charm |
 | 🟢 Charm template | ⚪ Observability integration with [`COS`](https://documentation.ubuntu.com/observability/track-2/) |
 | 🟢 Community guidelines & licenses | ⚪ Postgres support for ARRs to enable HA |
 | 🟢 Architecture Decision Records | ⚪ `tailscale-connector-k8s` charm |
@@ -57,7 +57,7 @@ Charmarr is a media server management system. It provides charmed versions of AR
 | 🟢 Solution level periodic itests | |
 | 🟢 Fix repo automations | |
 | 🔴 Threat modelling for track v1 | |
-| 🟠 Charmarr track 1/stable release | |
+| 🟢 Charmarr track 1/stable release | |
 
 ## Contributing
 
