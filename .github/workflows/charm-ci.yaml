@@ -46,9 +46,11 @@ jobs:
     name: Lint
     if: inputs.run-lint
     runs-on: ubuntu-latest
+    env:
+      USE_PARROT: ${{ inputs.use-parrot && secrets.CHARMARR_PARROT_APP_ID != '' }}
     steps:
       - name: Generate parrot token
-        if: inputs.use-parrot
+        if: env.USE_PARROT == 'true'
         id: parrot-token
         uses: actions/create-github-app-token@v2
         with:
@@ -60,14 +62,14 @@ jobs:
           token: ${{ steps.parrot-token.outputs.token || github.token }}
 
       - uses: actions/checkout@v6
-        if: inputs.use-parrot
+        if: env.USE_PARROT == 'true'
         with:
           repository: charmarr/parrot
           ref: v1
           path: parrot
 
       - uses: actions/checkout@v6
-        if: inputs.use-parrot
+        if: env.USE_PARROT == 'true'
         with:
           repository: charmarr/charmarr-lib
           path: charmarr-lib
@@ -77,7 +79,7 @@ jobs:
       - name: Run lint
         working-directory: ${{ inputs.charm-path }}
         run: |
-          if [[ "${{ inputs.use-parrot }}" == "true" ]]; then
+          if [[ "${USE_PARROT}" == "true" ]]; then
             uv run --project "${{ github.workspace }}/parrot" python -m parrot lint \
               --charm-path "$(pwd)" \
               --extra-index "${{ github.workspace }}/charmarr-lib"
@@ -94,9 +96,11 @@ jobs:
     name: Static Analysis
     if: inputs.run-static
     runs-on: ubuntu-latest
+    env:
+      USE_PARROT: ${{ inputs.use-parrot && secrets.CHARMARR_PARROT_APP_ID != '' }}
     steps:
       - name: Generate parrot token
-        if: inputs.use-parrot
+        if: env.USE_PARROT == 'true'
         id: parrot-token
         uses: actions/create-github-app-token@v2
         with:
@@ -108,14 +112,14 @@ jobs:
           token: ${{ steps.parrot-token.outputs.token || github.token }}
 
       - uses: actions/checkout@v6
-        if: inputs.use-parrot
+        if: env.USE_PARROT == 'true'
         with:
           repository: charmarr/parrot
           ref: v1
           path: parrot
 
       - uses: actions/checkout@v6
-        if: inputs.use-parrot
+        if: env.USE_PARROT == 'true'
         with:
           repository: charmarr/charmarr-lib
           path: charmarr-lib
@@ -125,7 +129,7 @@ jobs:
       - name: Run static checks
         working-directory: ${{ inputs.charm-path }}
         run: |
-          if [[ "${{ inputs.use-parrot }}" == "true" ]]; then
+          if [[ "${USE_PARROT}" == "true" ]]; then
             uv run --project "${{ github.workspace }}/parrot" python -m parrot static \
               --charm-path "$(pwd)" \
               --extra-index "${{ github.workspace }}/charmarr-lib"
@@ -142,9 +146,11 @@ jobs:
     name: Unit Tests
     if: inputs.run-unit
     runs-on: ubuntu-latest
+    env:
+      USE_PARROT: ${{ inputs.use-parrot && secrets.CHARMARR_PARROT_APP_ID != '' }}
     steps:
       - name: Generate parrot token
-        if: inputs.use-parrot
+        if: env.USE_PARROT == 'true'
         id: parrot-token
         uses: actions/create-github-app-token@v2
         with:
@@ -156,14 +162,14 @@ jobs:
           token: ${{ steps.parrot-token.outputs.token || github.token }}
 
       - uses: actions/checkout@v6
-        if: inputs.use-parrot
+        if: env.USE_PARROT == 'true'
         with:
           repository: charmarr/parrot
           ref: v1
           path: parrot
 
       - uses: actions/checkout@v6
-        if: inputs.use-parrot
+        if: env.USE_PARROT == 'true'
         with:
           repository: charmarr/charmarr-lib
           path: charmarr-lib
@@ -173,7 +179,7 @@ jobs:
       - name: Run unit tests
         working-directory: ${{ inputs.charm-path }}
         run: |
-          if [[ "${{ inputs.use-parrot }}" == "true" ]]; then
+          if [[ "${USE_PARROT}" == "true" ]]; then
             uv run --project "${{ github.workspace }}/parrot" python -m parrot unit \
               --charm-path "$(pwd)" \
               --extra-index "${{ github.workspace }}/charmarr-lib"
