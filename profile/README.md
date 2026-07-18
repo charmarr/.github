@@ -41,7 +41,7 @@ Charmarr is a media server management system. It provides charmed versions of AR
 | 🟢 Shared charm libraries | ⚪ Chaos testing |
 | 🟢 `charmarr-storage-k8s` charm | ⚪ Profiling and percorr |
 | 🟢 `gluetun-k8s` charm | ⚪ `jellyfin-k8s` charm |
-| 🟢 `qbittorrent-k8s` charm | |
+| 🟢 `qbittorrent-k8s` charm | ⚪ Ingress with Pangolin |
 | 🟢 `sabnzbd-k8s` charm | |
 | 🟢 `prowlarr-k8s` charm | |
 | 🟢 `flaresolverr-k8s` charm | |
