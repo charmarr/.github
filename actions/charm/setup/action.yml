@@ -32,6 +32,9 @@ inputs:
   classic-microk8s:
     description: Reinstall MicroK8s with --classic flag (required for NFS)
     default: "false"
+  configure-cni-for-istio:
+    description: Apply Cilium settings required by Istio sidecars. No-op unless substrate is k8s.
+    default: "false"
 
 runs:
   using: composite
@@ -69,9 +72,27 @@ runs:
         if [[ -n "${{ inputs.extra-debs }}" ]]; then
           extra_debs_flag="--extra-debs=${{ inputs.extra-debs }}"
         fi
-        sudo concierge prepare -p "${{ inputs.substrate }}" --extra-snaps=astral-uv $extra_debs_flag
+        trace_flag=""
+        if [[ "${{ inputs.substrate }}" == "k8s" ]]; then
+          trace_flag="--trace"
+        fi
+        sudo concierge prepare -p "${{ inputs.substrate }}" --extra-snaps=astral-uv $extra_debs_flag $trace_flag
         sudo snap install kubectl --classic
         juju model-defaults automatically-retry-hooks="${{ inputs.automatically-retry-hooks }}"
+
+    - name: Configure Cilium for Istio
+      # Cilium's socket-level LB rewrites service VIP -> pod IP inside the pod netns, so an
+      # Istio sidecar never sees the VIP and cannot route. Restricting socket LB to the host
+      # netns pushes pod traffic back through per-packet LB.
+      # https://docs.cilium.io/en/stable/network/servicemesh/istio/
+      if: inputs.juju == 'true' && inputs.configure-cni-for-istio == 'true' && inputs.substrate == 'k8s'
+      shell: bash
+      run: |
+        set -euo pipefail
+        kubectl -n kube-system patch configmap cilium-config --type merge \
+          --patch '{"data":{"bpf-lb-sock-hostns-only":"true"}}'
+        kubectl -n kube-system rollout restart daemonset cilium
+        kubectl -n kube-system rollout status daemonset cilium --timeout=300s
 
     - name: Reinstall MicroK8s with classic confinement
       if: inputs.juju == 'true' && inputs.classic-microk8s == 'true' && inputs.substrate == 'microk8s'

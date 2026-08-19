@@ -51,6 +51,10 @@ on:
         description: JSON array of suite filenames requiring classic MicroK8s
         type: string
         default: "[]"
+      configure-cni-for-istio:
+        description: Apply Cilium settings required by Istio sidecars (k8s substrate only)
+        type: boolean
+        default: false
     secrets:
       WIREGUARD_PRIVATE_KEY:
         required: false
@@ -181,6 +185,7 @@ jobs:
           substrate-channel: ${{ inputs.substrate-channel }}
           automatically-retry-hooks: ${{ inputs.automatically-retry-hooks }}
           classic-microk8s: ${{ contains(fromJSON(inputs.classic-microk8s-suites), matrix.suite) }}
+          configure-cni-for-istio: ${{ inputs.configure-cni-for-istio }}
 
       - name: Run integration tests
         working-directory: ${{ inputs.charm-path }}
