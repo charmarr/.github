@@ -67,6 +67,10 @@ on:
         description: Apply Cilium settings required by Istio sidecars (k8s substrate only)
         type: boolean
         default: false
+      exclude-suites:
+        description: JSON array of suite filenames to drop from the matrix
+        type: string
+        default: "[]"
     secrets:
       CHARMHUB_TOKEN:
         required: true
@@ -117,9 +121,13 @@ jobs:
       - name: Generate matrix
         id: suites
         working-directory: ${{ inputs.charm-path }}
+        env:
+          EXCLUDE_SUITES: ${{ inputs.exclude-suites }}
         run: |
+          set -euo pipefail
           if [[ -d "tests/integration" ]]; then
-            list="$(find tests/integration -name 'test_*.py' -printf '%f\n' | jq -R -n -c '[inputs]')"
+            found="$(find tests/integration -name 'test_*.py' -printf '%f\n' | jq -R -n -c '[inputs]')"
+            list="$(jq -n -c --argjson f "$found" --argjson e "$EXCLUDE_SUITES" '$f - $e')"
           else
             list="[]"
           fi

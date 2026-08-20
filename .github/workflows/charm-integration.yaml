@@ -55,6 +55,22 @@ on:
         description: Apply Cilium settings required by Istio sidecars (k8s substrate only)
         type: boolean
         default: false
+      exclude-suites:
+        description: JSON array of suite filenames to drop from the matrix
+        type: string
+        default: "[]"
+      include-suites:
+        description: JSON array of suite filenames to run exclusively, overriding discovery
+        type: string
+        default: "[]"
+      soft-fail:
+        description: Report failures as an issue instead of failing the workflow
+        type: boolean
+        default: false
+      timeout-minutes:
+        description: Timeout for the test execution step
+        type: number
+        default: 60
     secrets:
       WIREGUARD_PRIVATE_KEY:
         required: false
@@ -109,11 +125,27 @@ jobs:
       - name: Generate matrix
         id: suites
         working-directory: ${{ inputs.charm-path }}
+        env:
+          EXCLUDE_SUITES: ${{ inputs.exclude-suites }}
+          INCLUDE_SUITES: ${{ inputs.include-suites }}
         run: |
-          if [[ -d "tests/integration" ]]; then
-            list="$(find tests/integration -name 'test_*.py' -printf '%f\n' | jq -R -n -c '[inputs]')"
+          set -euo pipefail
+          if [[ ! -d "tests/integration" ]]; then
+            echo "suites=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          found="$(find tests/integration -name 'test_*.py' -printf '%f\n' | jq -R -n -c '[inputs]')"
+          if [[ "$INCLUDE_SUITES" != "[]" ]]; then
+            # Fail loudly rather than silently matching nothing, since an empty
+            # matrix skips the job and would look like a pass.
+            missing="$(jq -n -c --argjson f "$found" --argjson i "$INCLUDE_SUITES" '$i - $f')"
+            if [[ "$missing" != "[]" ]]; then
+              echo "::error::include-suites names suites that do not exist: $missing"
+              exit 1
+            fi
+            list="$INCLUDE_SUITES"
           else
-            list="[]"
+            list="$(jq -n -c --argjson f "$found" --argjson e "$EXCLUDE_SUITES" '$f - $e')"
           fi
           echo "suites=$list" >> "$GITHUB_OUTPUT"
 
@@ -122,6 +154,9 @@ jobs:
     needs: [build, matrix]
     if: needs.matrix.outputs.suites != '[]'
     runs-on: ${{ contains(fromJSON(inputs.self-hosted-suites), matrix.suite) && inputs.self-hosted-runner || inputs.integration-runner }}
+    permissions:
+      contents: read
+      issues: write
     strategy:
       fail-fast: false
       matrix:
@@ -188,6 +223,9 @@ jobs:
           configure-cni-for-istio: ${{ inputs.configure-cni-for-istio }}
 
       - name: Run integration tests
+        id: run-tests
+        continue-on-error: ${{ inputs.soft-fail }}
+        timeout-minutes: ${{ inputs.timeout-minutes }}
         working-directory: ${{ inputs.charm-path }}
         run: |
           set -euo pipefail
@@ -212,6 +250,25 @@ jobs:
           LOGFIRE_TOKEN: ${{ secrets.LOGFIRE_TOKEN }}
           GH_TOKEN: ${{ steps.parrot-token.outputs.token }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+
+      - name: Report soft failure
+        if: always() && inputs.soft-fail && steps.run-tests.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TITLE: "Integration failure: ${{ inputs.charm-path }} / ${{ matrix.suite }}"
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          body="$(printf '`%s` failed in `%s`.\n\nRun: %s\n' \
+            "${{ matrix.suite }}" "${{ inputs.charm-path }}" "$RUN_URL")"
+          existing="$(gh issue list --state open --limit 200 \
+            --json number,title --jq 'map(select(.title == env.TITLE)) | .[0].number // empty')"
+          if [[ -n "$existing" ]]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$TITLE" --body "$body"
+          fi
 
   cleanup:
     name: Cleanup Self-Hosted Runner
