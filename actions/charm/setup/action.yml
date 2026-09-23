@@ -80,6 +80,59 @@ runs:
         sudo snap install kubectl --classic
         juju model-defaults automatically-retry-hooks="${{ inputs.automatically-retry-hooks }}"
 
+    - name: Re-home pods that started before the CNI
+      # Canonical K8s reports the cluster ready before ck-network finishes installing, so
+      # pods scheduled in that window fall back to containerd's own bridge (10.88.0.0/16)
+      # and never get a Cilium identity, while their replacements sit unschedulable behind
+      # the node.cilium.io/agent-not-ready taint. CoreDNS has been observed split across
+      # both states, one replica stranded on the bridge and the other not ready, leaving
+      # the cluster with no DNS that a pod can actually reach. Concierge creates these
+      # pods itself, so they can only be corrected after the fact.
+      if: inputs.juju == 'true' && inputs.substrate == 'k8s'
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        kubectl -n kube-system rollout status daemonset/cilium --timeout=300s
+        kubectl -n kube-system rollout status deployment/cilium-operator --timeout=300s
+
+        all_pods() {
+          kubectl get pods -A \
+            -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}{"\n"}{end}'
+        }
+        # Host-networked pods share the node namespace and never hold an identity.
+        excluded() {
+          kubectl get pods -A \
+            -o jsonpath='{range .items[?(@.spec.hostNetwork==true)]}{.metadata.namespace}/{.metadata.name}{"\n"}{end}'
+          kubectl get ciliumendpoints -A \
+            -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}{"\n"}{end}'
+        }
+
+        stranded=$(comm -23 <(all_pods | sort) <(excluded | sort -u) || true)
+        if [[ -n "$stranded" ]]; then
+          echo "::warning::Pods started before the CNI was installed: $(echo "$stranded" | tr '\n' ' ')"
+
+          # Best effort: a failure here is not worth aborting every charm's pipeline over.
+          # The Juju controller is included: a charm agent that has replaced its default
+          # route reaches the controller over the pod network, so one stranded there fails
+          # every agent that restarts afterwards.
+          for pod in $stranded; do
+            namespace="${pod%%/*}"
+            name="${pod##*/}"
+            echo "Deleting $pod so its controller recreates it under Cilium."
+            kubectl -n "$namespace" delete pod "$name" --wait=false || true
+          done
+        else
+          echo "Every pod holds a Cilium identity."
+        fi
+
+        # DNS and the controller are what charm agents depend on, so wait for both.
+        kubectl -n kube-system rollout status deployment/coredns --timeout=300s
+        for namespace in $(kubectl get namespaces -o name | sed 's|namespace/||' | grep '^controller-'); do
+          kubectl -n "$namespace" rollout status statefulset/controller --timeout=300s
+        done
+        kubectl -n kube-system wait --for=condition=Ready pods --all --timeout=300s || true
+
     - name: Configure Cilium for Istio
       # Cilium's socket-level LB rewrites service VIP -> pod IP inside the pod netns, so an
       # Istio sidecar never sees the VIP and cannot route. Restricting socket LB to the host
