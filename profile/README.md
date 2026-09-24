@@ -36,13 +36,13 @@ Charmarr is a media server management system. It provides charmed versions of AR
 | 🟢 Organization, repos, logos | 🟢 `seerr-k8s` charm |
 | 🟢 Charm template | 🟢 Observability integration with [`COS`](https://documentation.ubuntu.com/observability/track-2/) |
 | 🟢 Community guidelines & licenses | 🔴 `tailscale-connector-k8s` charm (Official Canonical charms) |
-| 🟢 Architecture Decision Records | ⚪ Postgres support for ARRs to enable HA |
+| 🟢 Architecture Decision Records | 🔴 Postgres support for ARRs to enable HA |
 | 🟢 VXLAN design validation | ⚪ Workload tracing and span graphs |
 | 🟢 Shared charm libraries | ⚪ Chaos testing |
 | 🟢 `charmarr-storage-k8s` charm | ⚪ Profiling and percorr |
-| 🟢 `gluetun-k8s` charm | ⚪ `jellyfin-k8s` charm |
-| 🟢 `qbittorrent-k8s` charm | ⚪ Ingress with Pangolin |
-| 🟢 `sabnzbd-k8s` charm | |
+| 🟢 `gluetun-k8s` charm | 🟢 `jellyfin-k8s` charm |
+| 🟢 `qbittorrent-k8s` charm | 🔴 Ingress with Pangolin |
+| 🟢 `sabnzbd-k8s` charm | 🟢 Extend support to Canonical k8s |
 | 🟢 `prowlarr-k8s` charm | |
 | 🟢 `flaresolverr-k8s` charm | |
 | 🟢 `radarr-k8s` charm | |
